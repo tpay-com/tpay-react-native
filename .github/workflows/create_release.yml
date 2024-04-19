@@ -1,0 +1,54 @@
+name: Create release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to create'
+        required: true
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Remove previous documentation
+        run: rm -rf docs
+
+      - name: Generate documentation
+        run: npx typedoc ./src
+
+      - name: Configure Git
+        run: |
+          git config user.name "Tpay CI"
+          git config user.email ci-noreply@tpay.com
+
+      - name: Create release branch
+        run: git checkout -b release/${{ github.event.inputs.version }}
+
+      - name: Commit docs
+        run: |
+          git add docs/
+          git commit --allow-empty -m "Update docs"
+
+      - name: Push release branch
+        run: git push origin release/${{ github.event.inputs.version }}
+
+      - name: Create pull request
+        uses: thomaseizinger/create-pull-request@1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          head: release/${{ github.event.inputs.version }}
+          base: master
+          title: ${{ github.event.inputs.version }} into master
