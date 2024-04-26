@@ -22,7 +22,7 @@ data class ConfigurationMerchant(
     fun fromJson(json: JSONObject): ConfigurationMerchant = json.run {
       ConfigurationMerchant(
         authorization = MerchantAuthorization.fromJson(getJSONObject(AUTHORIZATION)),
-        environment = Environment.values()[getInt(ENVIRONMENT)],
+        environment = getString(ENVIRONMENT).toEnvironment(),
         certificateConfiguration = CertificateConfiguration.fromJson(
           getJSONObject(CERTIFICATE_PINNING_CONFIGURATION)
         ),

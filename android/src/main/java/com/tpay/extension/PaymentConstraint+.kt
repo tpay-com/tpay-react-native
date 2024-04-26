@@ -15,7 +15,7 @@ fun PaymentConstraint.toJsonObject(): JSONObject {
   return JSONObject().apply {
     when (this@toJsonObject) {
       is PaymentConstraint.Amount -> {
-        put("type", PaymentConstraintType.AMOUNT.ordinal)
+        put("type", PaymentConstraintType.AMOUNT.name.lowercase())
         put("minimum", minimum)
         put("maximum", maximum)
       }

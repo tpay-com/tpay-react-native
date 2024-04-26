@@ -28,7 +28,7 @@ class CreditCardScreenlessPayment(json: String) : ScreenlessPayment(json) {
 
   val recursive: Recursive? = optJSONObject(RECURSIVE)?.run {
     Recursive(
-      frequency = Frequency.values()[getInt(FREQUENCY)],
+      frequency = Frequency.valueOf(getString(FREQUENCY).uppercase()),
       quantity = optInt(QUANTITY, -1).let { value ->
         when (value) {
           -1 -> Quantity.Indefinite
@@ -63,6 +63,12 @@ class CreditCardScreenlessPayment(json: String) : ScreenlessPayment(json) {
     private const val DOMAIN = "domain"
     private const val ROC_TEXT = "rocText"
     private const val CONFIG = "config"
+
+    private const val DAILY = "daily"
+    private const val WEEKLY = "weekly"
+    private const val MONTHLY = "monthly"
+    private const val QUARTERLY = "quarterly"
+    private const val YEARLY = "yearly"
 
     private const val DATE_FORMAT = "yyyy-MM-dd"
   }

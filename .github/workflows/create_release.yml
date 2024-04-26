@@ -9,7 +9,7 @@ on:
 
 jobs:
   create-release:
-    runs-on: ubuntu-latest
+    runs-on: macos-13
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
@@ -20,7 +20,7 @@ jobs:
           node-version-file: .nvmrc
 
       - name: Install dependencies
-        run: yarn install --immutable
+        run: npm install
 
       - name: Remove previous documentation
         run: rm -rf docs

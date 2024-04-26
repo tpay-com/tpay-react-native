@@ -23,7 +23,9 @@ open class ScreenlessPayment(json: String) : JSONObject(json) {
       amount = paymentDetailsJson.getDouble(AMOUNT)
       description = paymentDetailsJson.getString(DESCRIPTION)
       hiddenDescription = paymentDetailsJson.actuallyOptString(HIDDEN_DESCRIPTION)
-      language = Language.values()[paymentDetailsJson.optInt(LANGUAGE, Language.PL.ordinal)]
+      language = paymentDetailsJson.actuallyOptString(LANGUAGE)?.uppercase()?.let { lang ->
+        Language.valueOf(lang)
+      }
     }
     payer = JsonUtil.getPayer(getJSONObject(PAYER).toString())
     optJSONObject(CALLBACKS).let { callbacksJson ->

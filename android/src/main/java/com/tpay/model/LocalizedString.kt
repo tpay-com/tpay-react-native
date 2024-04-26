@@ -13,7 +13,7 @@ class LocalizedString(
 
     fun fromJson(json: JSONObject): LocalizedString {
       return LocalizedString(
-        language = Language.values()[json.getInt(LANGUAGE)],
+        language = Language.valueOf(json.getString(LANGUAGE).uppercase()),
         value = json.getString(VALUE)
       )
     }

@@ -49,7 +49,7 @@ data class GooglePayUtilsConfiguration(
         price = rootJson.getDouble(PRICE),
         merchantName = rootJson.getString(MERCHANT_NAME),
         merchantId = rootJson.getString(MERCHANT_ID),
-        environment = GooglePayEnvironment.values()[rootJson.getInt(ENVIRONMENT)],
+        environment = GooglePayEnvironment.valueOf(rootJson.getString(ENVIRONMENT).uppercase()),
         customRequestCode = rootJson.optInt(CUSTOM_REQUEST_CODE)
       )
     }

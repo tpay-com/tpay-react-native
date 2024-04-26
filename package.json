@@ -1,6 +1,6 @@
 {
   "name": "react-native-tpay",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "The Tpay SDK empowers your app to seamlessly integrate Tpay’s payment functionalities, providing a comprehensive and developer-friendly solution for managing payments.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",

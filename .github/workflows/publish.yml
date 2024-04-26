@@ -10,7 +10,7 @@ on:
 jobs:
   publish:
     if: github.event.pull_request.merged && (startsWith(github.event.pull_request.head.ref, 'release/') || startsWith(github.event.pull_request.head.ref, 'hotfix/'))
-    runs-on: ubuntu-latest
+    runs-on: macos-13
     steps:
       - name: Extract version from branch name (for release branches)
         if: startsWith(github.event.pull_request.head.ref, 'release/')
@@ -34,9 +34,9 @@ jobs:
         with:
           node-version-file: .nvmrc
           registry-url: 'https://registry.npmjs.org'
-      
+
       - name: Install dependencies
-        run: yarn install --immutable
+        run: npm install
 
       - name: Publish to npm
         run: npm publish

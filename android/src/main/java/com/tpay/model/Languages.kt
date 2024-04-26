@@ -14,9 +14,9 @@ data class Languages(
     fun fromJson(json: JSONObject): Languages {
       val supportedLanguagesArray = json.getJSONArray(SUPPORTED_LANGUAGES_ARRAY)
       return Languages(
-        preferredLanguage = Language.values()[json.getInt(PREFERRED_LANGUAGE)],
+        preferredLanguage = Language.valueOf(json.getString(PREFERRED_LANGUAGE).uppercase()),
         supportedLanguages = (0 until supportedLanguagesArray.length()).map { index ->
-          Language.values()[index.toInt()]
+          Language.valueOf(supportedLanguagesArray.getString(index).uppercase())
         }
       )
     }

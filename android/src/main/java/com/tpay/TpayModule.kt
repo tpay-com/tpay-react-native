@@ -450,7 +450,7 @@ class TpayModule(
   )
 
   companion object {
-    const val NAME = "Tpay"
+    const val NAME = "TpayRNModule"
 
     private const val METHOD_CHANNEL_NAME = "tpay"
     private const val CONFIGURE_METHOD = "configure"

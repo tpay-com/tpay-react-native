@@ -20,6 +20,12 @@ class PaymentMethods(val methods: List<PaymentMethod>) {
     private const val TRANSFER_INDEX = 1
     private const val CARD_INDEX = 2
     private const val RATY_PEKAO_INDEX = 0
+    private const val APPLE_PAY = "applePay"
+    private const val GOOGLE_PAY = "googlePay"
+    private const val RATY_PEKAO = "ratyPekao"
+    private const val BLIK = "blik"
+    private const val CARD = "card"
+    private const val TRANSFER = "transfer"
 
     fun fromJson(json: JSONObject): PaymentMethods {
       val paymentMethodsArray = json.getJSONArray(METHODS_ARRAY)
@@ -28,11 +34,11 @@ class PaymentMethods(val methods: List<PaymentMethod>) {
 
       val wallets = digitalWalletsArray?.let { array ->
         (0 until array.length())
-          .map { index -> array.getInt(index) }
-          .filter { value -> value != APPLE_PAY_INDEX }
+          .map { index -> array.getString(index) }
+          .filter { value -> value != APPLE_PAY }
           .map { value ->
             when (value) {
-              DigitalWallet.GOOGLE_PAY.ordinal -> DigitalWallet.GOOGLE_PAY
+              GOOGLE_PAY -> DigitalWallet.GOOGLE_PAY
               else -> throw ValidationException(UNKNOWN_DIGITAL_WALLET_MESSAGE)
             }
           }
@@ -40,22 +46,22 @@ class PaymentMethods(val methods: List<PaymentMethod>) {
 
       val installmentPayments = installmentPaymentsArray?.let { array ->
         (0 until array.length())
-          .map { index -> array.getInt(index) }
+          .map { index -> array.getString(index) }
           .map { value ->
             when (value) {
-              RATY_PEKAO_INDEX -> InstallmentPayment.RATY_PEKAO
+              RATY_PEKAO -> InstallmentPayment.RATY_PEKAO
               else -> throw ValidationException(UNKNOWN_INSTALLMENT_PAYMENT_MESSAGE)
             }
           }
       } ?: emptyList()
 
       val paymentMethods = (0 until paymentMethodsArray.length())
-        .map { index -> paymentMethodsArray.getInt(index) }
+        .map { index -> paymentMethodsArray.getString(index) }
         .map { index ->
           when (index) {
-            BLIK_INDEX -> PaymentMethod.Blik
-            TRANSFER_INDEX -> PaymentMethod.Pbl
-            CARD_INDEX -> PaymentMethod.Card
+            BLIK -> PaymentMethod.Blik
+            TRANSFER -> PaymentMethod.Pbl
+            CARD -> PaymentMethod.Card
             else -> throw ValidationException(UNKNOWN_PAYMENT_METHOD_MESSAGE)
           }
         }

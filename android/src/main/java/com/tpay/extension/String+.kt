@@ -20,3 +20,11 @@ fun String.isEmailValid(): Boolean {
     return matcher.matches()
   }
 }
+
+fun String.toEnvironment(): Environment {
+  return when (this) {
+    Environment.PRODUCTION.name.lowercase() -> Environment.PRODUCTION
+    Environment.SANDBOX.name.lowercase() -> Environment.SANDBOX
+    else -> throw IllegalArgumentException(ValidationMessages.UNKNOWN_ENVIRONMENT)
+  }
+}

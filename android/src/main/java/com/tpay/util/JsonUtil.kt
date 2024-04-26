@@ -142,7 +142,7 @@ object JsonUtil {
             TokenizedCard(
               token = tokenizedCardObject.getString(TOKEN),
               cardTail = tokenizedCardObject.getString(CARD_TAIL),
-              brand = CreditCardBrand.values()[tokenizedCardObject.getInt(BRAND)]
+              brand = CreditCardBrand.valueOf(tokenizedCardObject.getString(BRAND).uppercase())
             )
           }
       } ?: emptyList<TokenizedCard>()
