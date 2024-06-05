@@ -39,19 +39,18 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/tpay-com/tpay-ios",
+  "repository": "https://github.com/tpay-com/tpay-react-native",
   "author": "Karol Wojciechowski <karol.wojciechowski@tpay.com> (https://tpay.com/)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/tpay-com/tpay-ios/issues"
+    "url": "https://github.com/tpay-com/tpay-react-native/issues"
   },
-  "homepage": "https://github.com/tpay-com/tpay-ios#readme",
+  "homepage": "https://tpay.com/",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^17.0.2",
-    "@evilmartians/lefthook": "^1.5.0",
     "@react-native/eslint-config": "^0.72.2",
     "@release-it/conventional-changelog": "^5.0.0",
     "@types/jest": "^28.1.2",

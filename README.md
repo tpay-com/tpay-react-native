@@ -1,7 +1,7 @@
 # react-native-tpay
 
 The Tpay SDK empowers your app to seamlessly integrate Tpay’s payment functionalities, providing a comprehensive and developer-friendly solution for managing payments.
-
+Documentation is available [here](https://tpay-com.github.io/tpay-react-native/).
 ## Installation
 
 ```sh
