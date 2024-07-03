@@ -104,6 +104,9 @@ class TpayModule(
   fun screenlessRatyPekaoPayment(json: String, promise: Promise) = handleScreenlessPayment<RatyPekaoScreenlessPayment>(json, promise)
 
   @ReactMethod
+  fun screenlessPayPoPayment(json: String, promise: Promise) = handleScreenlessPayment<PayPoScreenlessPayment>(json, promise)
+
+  @ReactMethod
   fun screenlessCreditCardPayment(json: String, promise: Promise) = handleScreenlessPayment<CreditCardScreenlessPayment>(json, promise)
 
   @ReactMethod
@@ -276,6 +279,7 @@ class TpayModule(
         BLIKScreenlessPayment::class -> BLIKScreenlessPayment(json)
         TransferScreenlessPayment::class -> TransferScreenlessPayment(json)
         RatyPekaoScreenlessPayment::class -> RatyPekaoScreenlessPayment(json)
+        PayPoScreenlessPayment::class -> PayPoScreenlessPayment(json)
         CreditCardScreenlessPayment::class -> CreditCardScreenlessPayment(json)
         GooglePayScreenlessPayment::class -> GooglePayScreenlessPayment(json)
         else -> throw IllegalArgumentException(NOT_IMPLEMENTED_SCREENLESS_PAYMENT_MESSAGE)

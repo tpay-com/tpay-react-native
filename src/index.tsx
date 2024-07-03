@@ -21,6 +21,7 @@ import { mapPaymentChannelsResult } from './util/payment_channels_util';
 import type { RatyPekaoPayment } from './model/screenless/raty_pekao_payment';
 import type { BlikPayment } from './model/screenless/blik_payment';
 import type { ApplePayPayment } from './model/screenless/apple_pay_payment';
+import type { PayPoPayment } from './model/screenless/pay_po_payment';
 
 const LINKING_ERROR =
   `The package 'react-native-tpay' doesn't seem to be linked. Make sure: \n\n` +
@@ -85,6 +86,7 @@ export * from './model/screenless/google_pay_utils_configuration';
 export * from './model/screenless/notifications';
 export * from './model/screenless/payment_details';
 export * from './model/screenless/raty_pekao_payment';
+export * from './model/screenless/pay_po_payment';
 export * from './model/screenless/recursive';
 export * from './model/screenless/redirects';
 export * from './model/screenless/screenless_payment';
@@ -180,6 +182,18 @@ export async function screenlessRatyPekaoPayment(
 ): Promise<ScreenlessResult> {
   const result = await Tpay.screenlessRatyPekaoPayment(
     JSON.stringify(ratyPekaoPayment)
+  );
+  return mapScreenlessResult(result);
+}
+
+/**
+ * Method used to start screenless PayPo payment
+ */
+export async function screenlessPayPoPayment(
+  payPoPayment: PayPoPayment
+): Promise<ScreenlessResult> {
+  const result = await Tpay.screenlessPayPoPayment(
+    JSON.stringify(payPoPayment)
   );
   return mapScreenlessResult(result);
 }

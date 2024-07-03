@@ -395,6 +395,15 @@ async function startScreenlessRatyPekaoPayment() {
 }
 ```
 
+## Screenless PayPo payment
+```typescript
+async function startScreenlessPayPoPayment() {
+  const payPoPayment = new PayPoPayment(paymentDetails, payer, callbacks);
+  const screenlessResult = await screenlessPayPoPayment(payPoPayment);
+  handleScreenlessResult(screenlessResult);
+}
+```
+
 ## Screenless credit card payment
 
 Credit card payment can be created with credit card data or credit card token (for returning customers).

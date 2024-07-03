@@ -2,5 +2,6 @@
  * Enum describing possible installment payments
  */
 export enum InstallmentPayment {
-  ratyPekao = "ratyPekao",
+  ratyPekao = 'ratyPekao',
+  payPo = 'payPo',
 }

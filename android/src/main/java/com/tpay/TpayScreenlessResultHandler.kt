@@ -5,6 +5,7 @@ import com.tpay.sdk.api.screenless.blik.*
 import com.tpay.sdk.api.screenless.transfer.*
 import com.tpay.sdk.api.screenless.card.*
 import com.tpay.sdk.api.screenless.googlePay.*
+import com.tpay.sdk.api.screenless.payPo.*
 import com.tpay.sdk.api.screenless.PaymentDetails
 import com.tpay.sdk.api.screenless.LongPollingConfig
 import com.tpay.sdk.api.screenless.TransactionState
@@ -61,6 +62,23 @@ object TpayScreenlessResultHandler {
       }
 
       is CreatePekaoInstallmentTransactionResult.Error -> {
+        TpayScreenlessResult.Error(createResult.devErrorMessage)
+      }
+    }
+  }
+
+  fun handlePayPoCreateResult(
+    createResult: CreatePayPoTransactionResult
+  ): TpayScreenlessResult {
+    return when (createResult) {
+      is CreatePayPoTransactionResult.Created -> {
+        TpayScreenlessResult.PaymentCreated(
+          createResult.transactionId,
+          createResult.paymentUrl
+        )
+      }
+
+      is CreatePayPoTransactionResult.Error -> {
         TpayScreenlessResult.Error(createResult.devErrorMessage)
       }
     }

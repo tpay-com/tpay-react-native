@@ -34,7 +34,7 @@ object TpayUtil {
         .configure(merchant.environment)
         .configure(paymentMethods.methods)
         .configure(languages.preferredLanguage, languages.supportedLanguages)
-        .configure(Compatibility.Flutter)
+        .configure(Compatibility.REACT_NATIVE)
         .configure(object : MerchantDetailsProvider {
           override fun merchantDisplayName(language: Language): String {
             return merchantDetails.displayNames

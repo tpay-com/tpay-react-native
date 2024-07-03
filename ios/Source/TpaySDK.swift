@@ -146,6 +146,17 @@ final class TpayRNModule: NSObject, RCTBridgeModule {
         }
     }
 
+    @objc func screenlessPayPoPayment(_ json: String, resolve: @escaping RCTPromiseResolveBlock, reject _: RCTPromiseRejectBlock) {
+        Headless.getAvailablePaymentChannels { [weak self] result in
+            switch result {
+            case let .success(paymentChannels):
+                self?.invokePayPoPayment(json, resolve: resolve, paymentChannels: paymentChannels)
+            case let .failure(error):
+                resolve(ScreenlessResult.paymentFailure(error: error).toJson())
+            }
+        }
+    }
+
     @objc func screenlessAmbiguousBLIKPayment(_ json: String, resolve: @escaping RCTPromiseResolveBlock, reject _: RCTPromiseRejectBlock) {
         guard let continuePayment = TransactionConfiguration.continuePayment(continuePaymentConfiguration: json),
               let blikTranscation = blikPayments.first(where: { $0.ongoingTransaction.id == continuePayment.id }),
@@ -321,4 +332,26 @@ final class TpayRNModule: NSObject, RCTBridgeModule {
             resolve(ScreenlessResult.paymentFailure(error: error).toJson())
         }
     }
+
+    private func invokePayPoPayment(_ json: String, resolve: @escaping RCTPromiseResolveBlock, paymentChannels: [Headless.Models.PaymentChannel]) {
+        guard let payPoPayment = TransactionConfiguration.payPoPayment(payPoPaymentConfiguration: json, paymentChannels: paymentChannels) else {
+            resolve(ScreenlessResult.methodCallError().toJson())
+            return
+        }
+
+        do {
+            try TpayModule.configure(callbacks: payPoPayment.callbacks)
+            try Headless.invokePayment(for: payPoPayment, using: payPoPayment.paymentChannel) { result in
+                switch result {
+                case let .success(transaction):
+                    resolve(ScreenlessResult.paymentCreated(continueUrl: transaction.continueUrl, transactionId: transaction.ongoingTransaction.id).toJson())
+                case let .failure(error):
+                    resolve(ScreenlessResult.paymentFailure(error: error).toJson())
+                }
+            }
+        } catch {
+            resolve(ScreenlessResult.paymentFailure(error: error).toJson())
+        }
+    }
+
 }

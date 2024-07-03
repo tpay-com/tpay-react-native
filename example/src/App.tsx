@@ -52,6 +52,7 @@ import {
   PaymentMethod,
   PaymentMethods,
   RatyPekaoPayment,
+  PayPoPayment,
   Redirects,
   Result,
   screenlessAmbiguousBLIKPayment,
@@ -61,6 +62,7 @@ import {
   ScreenlessConfiguredPaymentFailed,
   screenlessCreditCardPayment,
   screenlessGooglePayPayment,
+  screenlessPayPoPayment,
   ScreenlessMethodCallError,
   ScreenlessPaid,
   ScreenlessPaymentCreated,
@@ -175,6 +177,12 @@ async function startScreenlessRatyPekaoPayment() {
   );
 
   const screenlessResult = await screenlessRatyPekaoPayment(ratyPekaoPayment);
+  handleScreenlessResult(screenlessResult);
+}
+
+async function startScreenlessPayPoPayment() {
+  const payPoPayment = new PayPoPayment(paymentDetails, payer, callbacks);
+  const screenlessResult = await screenlessPayPoPayment(payPoPayment);
   handleScreenlessResult(screenlessResult);
 }
 
@@ -377,7 +385,7 @@ async function configureTpay() {
   const paymentMethods = new PaymentMethods(
     [PaymentMethod.card, PaymentMethod.blik, PaymentMethod.transfer],
     [DigitalWallet.googlePay, DigitalWallet.applePay],
-    [InstallmentPayment.ratyPekao]
+    [InstallmentPayment.ratyPekao, InstallmentPayment.payPo]
   );
 
   const configuration = new TpayConfiguration(

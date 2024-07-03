@@ -122,6 +122,24 @@ final class TransactionConfiguration {
                      callbacks: callbacks)
     }
 
+    static func payPoPayment(payPoPaymentConfiguration: String, paymentChannels: [Headless.Models.PaymentChannel]) -> PayPoPayment? {
+        guard let payPoData = payPoPaymentConfiguration.data(using: .utf8),
+                let payPoPayment = try? JSONDecoder().decode(T.PayPoPayment.self, from: payPoData),
+                let payer = makePayer(from: payPoPayment.payer),
+                let paymentChannel = paymentChannels.first(where: { $0.paymentKind == .payPo }) else {
+            return nil
+        }
+
+        let callbacks = makeCallbacksConfiguration(from: payPoPayment.callbacks)
+
+        return .init(amount: payPoPayment.paymentDetails.amount,
+                        description: payPoPayment.paymentDetails.description,
+                        payerContext: .init(payer: payer),
+                        paymentChannel: paymentChannel,
+                        callbacks: callbacks)
+    }
+
+
     static func continuePayment(continuePaymentConfiguration: String) -> ContinuePayment? {
         guard let continuePaymentData = continuePaymentConfiguration.data(using: .utf8),
               let continuePayment = try? JSONDecoder().decode(T.ContinuePayment.self, from: continuePaymentData) else {

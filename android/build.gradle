@@ -90,6 +90,6 @@ dependencies {
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation 'com.tpay:sdk:1.1.0'
+  implementation 'com.tpay:sdk:1.2.1'
 }
 
