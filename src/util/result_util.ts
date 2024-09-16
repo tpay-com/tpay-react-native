@@ -1,4 +1,5 @@
 import { MethodCallError } from '../model/result/result';
+import { PaymentCreated } from '../model/result/result';
 import { PaymentCompleted } from '../model/result/result';
 import { ConfigurationSuccess } from '../model/result/result';
 import { PaymentCancelled } from '../model/result/result';
@@ -10,6 +11,7 @@ import { Result } from '../model/result/result';
 
 const configurationSuccess = 'configurationSuccess';
 const validationError = 'validationError';
+const paymentCreated = 'paymentCreated';
 const paymentCompleted = 'paymentCompleted';
 const paymentCancelled = 'paymentCancelled';
 const tokenizationCompleted = 'tokenizationCompleted';
@@ -26,6 +28,8 @@ export function mapResult(json: string): Result {
       return new ConfigurationSuccess();
     case validationError:
       return new ValidationError(object.value);
+    case paymentCreated:
+      return new PaymentCreated(object.value);
     case paymentCompleted:
       return new PaymentCompleted(object.value);
     case paymentCancelled:

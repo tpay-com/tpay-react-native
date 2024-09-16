@@ -312,6 +312,7 @@ class TpayModule(
     val (type, value) = when (tpayResult) {
       is TpayResult.ConfigurationSuccess -> CONFIGURATION_SUCCESS to null
       is TpayResult.ValidationError -> VALIDATION_ERROR to tpayResult.message
+      is TpayResult.PaymentCreated -> PAYMENT_CREATED to tpayResult.transactionId
       is TpayResult.PaymentCompleted -> PAYMENT_COMPLETED to tpayResult.transactionId
       is TpayResult.PaymentCancelled -> PAYMENT_CANCELLED to tpayResult.transactionId
       is TpayResult.TokenizationCompleted -> TOKENIZATION_COMPLETED to null

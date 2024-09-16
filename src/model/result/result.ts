@@ -39,6 +39,21 @@ export class ValidationError extends Result {
 }
 
 /**
+ * Indicates that payment was successfully created
+ */
+export class PaymentCreated extends Result {
+  /**
+   * Transaction id of the created transaction
+   */
+  transactionId: string;
+
+  constructor(transactionId: string) {
+    super();
+    this.transactionId = transactionId;
+  }
+}
+
+/**
  * Indicates that payment was successful and module was closed
  */
 export class PaymentCompleted extends Result {

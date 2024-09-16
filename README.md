@@ -71,6 +71,10 @@ function handleResult(result: Result) {
     // provided data is invalid
     // check error message via result.message
   }
+  if (result instanceof PaymentCreated) {
+    // payment completed successfully
+    // read transactionId via result.transactionId
+  }
   if (result instanceof PaymentCompleted) {
     // payment completed successfully
     // read transactionId via result.transactionId

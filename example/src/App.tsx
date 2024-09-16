@@ -87,6 +87,7 @@ import {
   ValidationError,
   WalletConfiguration,
   getAvailablePaymentChannels,
+  PaymentCreated,
 } from 'react-native-tpay';
 
 // Create a payer object, phone number and address fields are optional
@@ -497,6 +498,10 @@ function handleResult(result: Result) {
   if (result instanceof ValidationError) {
     // provided data is invalid
     // check error message via result.message
+  }
+  if (result instanceof PaymentCreated) {
+    // payment created successfully
+    // read transactionId via result.transactionId
   }
   if (result instanceof PaymentCompleted) {
     // payment completed successfully
