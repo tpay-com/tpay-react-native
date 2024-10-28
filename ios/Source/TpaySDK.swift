@@ -181,7 +181,7 @@ final class TpayRNModule: NSObject, RCTBridgeModule {
         }
     }
 
-    @objc func availablePaymentMethods(resolve: @escaping RCTPromiseResolveBlock, reject _: RCTPromiseRejectBlock) {
+    @objc func getAvailablePaymentChannels(_ resolve: @escaping RCTPromiseResolveBlock, reject _: RCTPromiseRejectBlock) {
         Headless.getAvailablePaymentChannels { result in
             switch result {
             case let .success(paymentMethods):

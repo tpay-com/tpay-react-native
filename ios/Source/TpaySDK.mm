@@ -32,7 +32,6 @@
     RCT_EXTERN_METHOD(screenlessPayPoPayment: (NSString *)json
                       resolve:(RCTPromiseResolveBlock)resolve
                       reject:(RCTPromiseRejectBlock)reject)
-    RCT_EXTERN_METHOD(availablePaymentMethods: (NSString *)json
-                      resolve:(RCTPromiseResolveBlock)resolve
+    RCT_EXTERN_METHOD(getAvailablePaymentChannels: (RCTPromiseResolveBlock)resolve
                       reject:(RCTPromiseRejectBlock)reject)
 @end
