@@ -7,6 +7,7 @@ struct BlikPayment: Transaction {
     let amount: Double
     let description: String
     let payerContext: PayerContext?
+    let hiddenDescription: String?
     let token: String?
     let alias: String?
     let paymentChannel: Headless.Models.PaymentChannel

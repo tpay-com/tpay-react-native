@@ -7,6 +7,7 @@ struct BankPayment: Transaction {
     let amount: Double
     let description: String
     let payerContext: PayerContext?
+    let hiddenDescription: String?
     let paymentChannel: Headless.Models.PaymentChannel
     let callbacks: CallbacksConfiguration
 }

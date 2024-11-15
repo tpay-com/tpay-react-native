@@ -19,7 +19,7 @@ final class TransactionConfiguration {
 
         let payerContext = makeTransactionPayerContext(from: signleTransaction)
 
-        return SingleTransaction(amount: signleTransaction.amount, description: signleTransaction.description, payerContext: payerContext)
+        return SingleTransaction(amount: signleTransaction.amount, description: signleTransaction.description, hiddenDescription: signleTransaction.hiddenDescription, payerContext: payerContext)
     }
 
     static func cardTokenTransaction(transactionConfiguration: String) -> Transaction? {
@@ -28,7 +28,7 @@ final class TransactionConfiguration {
             return nil
         }
         let payerContext = makeTokenPayerContext(from: tokenPayment)
-        return SingleTransaction(amount: tokenPayment.amount, description: tokenPayment.description, payerContext: payerContext)
+        return SingleTransaction(amount: tokenPayment.amount, description: tokenPayment.description, hiddenDescription: tokenPayment.hiddenDescription, payerContext: payerContext)
     }
     
     static func addCard(tokenisationConfiguration: String) -> TokenizationData? {
@@ -62,6 +62,7 @@ final class TransactionConfiguration {
         return .init(amount: cardPayment.paymentDetails.amount,
                      description: cardPayment.paymentDetails.description,
                      payerContext: .init(payer: payer),
+                     hiddenDescription: cardPayment.paymentDetails.hiddenDescription,
                      paymentChannel: paymentChannel,
                      card: card,
                      cardToken: cardToken,
@@ -81,6 +82,7 @@ final class TransactionConfiguration {
         return .init(amount: blikPayment.paymentDetails.amount,
                      description: blikPayment.paymentDetails.description,
                      payerContext: .init(payer: payer),
+                     hiddenDescription: blikPayment.paymentDetails.hiddenDescription,
                      token: blikPayment.code,
                      alias: blikPayment.alias?.value,
                      paymentChannel: paymentChannel,
@@ -100,6 +102,7 @@ final class TransactionConfiguration {
         return .init(amount: bankPayment.paymentDetails.amount,
                      description: bankPayment.paymentDetails.description,
                      payerContext: .init(payer: payer),
+                     hiddenDescription: bankPayment.paymentDetails.hiddenDescription,
                      paymentChannel: paymentChannel,
                      callbacks: callbacks)
     }
@@ -117,6 +120,7 @@ final class TransactionConfiguration {
         return .init(amount: digitalWalletPayment.paymentDetails.amount,
                      description: digitalWalletPayment.paymentDetails.description,
                      payerContext: .init(payer: payer),
+                     hiddenDescription: digitalWalletPayment.paymentDetails.hiddenDescription,
                      paymentChannel: paymentChannel,
                      token: digitalWalletPayment.applePayToken,
                      callbacks: callbacks)
@@ -135,6 +139,7 @@ final class TransactionConfiguration {
         return .init(amount: payPoPayment.paymentDetails.amount,
                         description: payPoPayment.paymentDetails.description,
                         payerContext: .init(payer: payer),
+                        hiddenDescription: payPoPayment.paymentDetails.hiddenDescription,
                         paymentChannel: paymentChannel,
                         callbacks: callbacks)
     }
