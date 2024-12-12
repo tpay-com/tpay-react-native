@@ -135,7 +135,7 @@ final class TpayRNModule: NSObject, RCTBridgeModule {
         }
     }
 
-    @objc func paymentWithApplePay(_ json: String, resolve: @escaping RCTPromiseResolveBlock, reject _: RCTPromiseRejectBlock) {
+    @objc func screenlessApplePayPayment(_ json: String, resolve: @escaping RCTPromiseResolveBlock, reject _: RCTPromiseRejectBlock) {
         Headless.getAvailablePaymentChannels { [weak self] result in
             switch result {
             case let .success(paymentChannels):

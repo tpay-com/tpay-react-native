@@ -26,7 +26,7 @@
     RCT_EXTERN_METHOD(screenlessAmbiguousBLIKPayment: (NSString *)json
                       resolve:(RCTPromiseResolveBlock)resolve
                       reject:(RCTPromiseRejectBlock)reject)
-    RCT_EXTERN_METHOD(paymentWithApplePay: (NSString *)json
+    RCT_EXTERN_METHOD(screenlessApplePayPayment: (NSString *)json
                       resolve:(RCTPromiseResolveBlock)resolve
                       reject:(RCTPromiseRejectBlock)reject)
     RCT_EXTERN_METHOD(screenlessPayPoPayment: (NSString *)json
