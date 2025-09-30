@@ -9858,7 +9858,7 @@ toidentifier@1.0.1:
     "@react-native-community/cli-platform-android" "^13.5.1"
     "@react-native/gradle-plugin" "^0.73.4"
     react "18.2.0"
-    react-native "0.72.6"
+    react-native "0.72.9"
     react-native-gradle-plugin "^0.71.19"
 
 tr46@~0.0.3:
