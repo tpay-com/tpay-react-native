@@ -1,32 +1,61 @@
 /**
  * Indicates a result of Tpay UI module action
  */
-export class Result {}
+export abstract class Result {
+  /**
+   * Type identifier for the result
+   */
+  abstract readonly type: string;
+
+  /**
+   * Optional error message or additional information
+   */
+  message?: string;
+
+  /**
+   * Transaction ID when applicable
+   */
+  transactionId?: string | null;
+
+  /**
+   * Payment URL for continuation (used in screenless payments)
+   */
+  paymentUrl?: string;
+}
 
 /**
  * Indicates that credit card tokenization was successful and module was closed
  */
-export class TokenizationCompleted extends Result {}
+export class TokenizationCompleted extends Result {
+  readonly type = 'tokenizationCompleted';
+}
 
 /**
  * Indicates that credit card tokenization failed and module was closed
  */
-export class TokenizationFailure extends Result {}
+export class TokenizationFailure extends Result {
+  readonly type = 'tokenizationFailure';
+}
 
 /**
  * Indicates that configuration was successful
  */
-export class ConfigurationSuccess extends Result {}
+export class ConfigurationSuccess extends Result {
+  readonly type = 'configurationSuccess';
+}
 
 /**
  * Indicates that user closed the module without making a payment/tokenization
  */
-export class ModuleClosed extends Result {}
+export class ModuleClosed extends Result {
+  readonly type = 'moduleClosed';
+}
 
 /**
  * Indicates that some data passed to module is invalid
  */
 export class ValidationError extends Result {
+  readonly type = 'validationError';
   /**
    * Validation error message
    */
@@ -42,6 +71,7 @@ export class ValidationError extends Result {
  * Indicates that payment was successfully created
  */
 export class PaymentCreated extends Result {
+  readonly type = 'paymentCreated';
   /**
    * Transaction id of the created transaction
    */
@@ -57,6 +87,7 @@ export class PaymentCreated extends Result {
  * Indicates that payment was successful and module was closed
  */
 export class PaymentCompleted extends Result {
+  readonly type = 'paymentCompleted';
   /**
    * Transaction id of the completed transaction
    */
@@ -72,6 +103,7 @@ export class PaymentCompleted extends Result {
  * Indicates that payment failed and module was closed
  */
 export class PaymentCancelled extends Result {
+  readonly type = 'paymentCancelled';
   /**
    * If exists, id of the transaction
    */
@@ -87,6 +119,7 @@ export class PaymentCancelled extends Result {
  * Indicates a module error
  */
 export class MethodCallError extends Result {
+  readonly type = 'methodCallError';
   /**
    * Error message
    */

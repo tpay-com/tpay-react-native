@@ -50,19 +50,31 @@ final class TpayRNModule: NSObject, RCTBridgeModule {
         }
     }
 
-    @objc func startPayment(_ json: String, resolve: @escaping RCTPromiseResolveBlock, reject _: RCTPromiseRejectBlock) {
+    @objc func startPayment(_ json: String,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject _: RCTPromiseRejectBlock) {
         guard let singleTransaction = TransactionConfiguration.single(transactionConfiguration: json) else {
             resolve(ConfigurationResult.configurationFailure().toJson())
             return
         }
 
-        paymentPresentation.paymentResult = { result in resolve(result) }
+        var didFinish = false
+        let safeResolve: (Any?) -> Void = { value in
+            if !didFinish {
+                didFinish = true
+                resolve(value)
+            }
+        }
+
+        paymentPresentation.paymentResult = { result in
+            safeResolve(result)
+        }
 
         DispatchQueue.main.async { [weak self] in
             do {
                 try self?.paymentPresentation.presentPayment(for: singleTransaction)
             } catch {
-                resolve(ConfigurationResult.configurationFailure(error: error).toJson())
+                safeResolve(ConfigurationResult.configurationFailure(error: error).toJson())
             }
         }
     }

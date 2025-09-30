@@ -14,6 +14,7 @@ export class TokenPayment extends Transaction {
    * @param payer - payer information
    * @param amount - amount of money payer has to pay
    * @param description - description of payment shown to payer
+   * @param hiddenDescription - description of payment shown to merchant
    * @param notifications - payment notification url and email
    */
   constructor(
@@ -21,9 +22,10 @@ export class TokenPayment extends Transaction {
     payer: Payer,
     amount: number,
     description: string,
+    hiddenDescription: string | null,
     notifications: Notifications | null
   ) {
-    super(amount, description, notifications);
+    super(amount, description, hiddenDescription, notifications);
     this.cardToken = cardToken;
     this.payer = payer;
   }

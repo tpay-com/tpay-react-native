@@ -3,12 +3,43 @@ import { AmbiguousAlias } from 'react-native-tpay';
 /**
  * Indicates a result of screenless action
  */
-export class ScreenlessResult {}
+export abstract class ScreenlessResult {
+  /**
+   * Type identifier for the result
+   */
+  abstract readonly type: string;
+
+  /**
+   * Optional error message or additional information
+   */
+  message?: string;
+
+  /**
+   * Transaction ID when applicable
+   */
+  transactionId?: string;
+
+  /**
+   * Payment URL for continuation when applicable
+   */
+  paymentUrl?: string | null;
+
+  /**
+   * Error message when applicable
+   */
+  error?: string | null;
+
+  /**
+   * Ambiguous aliases for BLIK payments when applicable
+   */
+  aliases?: Array<AmbiguousAlias>;
+}
 
 /**
  * Indicates that some data passed to payment is invalid
  */
 export class ScreenlessValidationError extends ScreenlessResult {
+  readonly type = 'validationError';
   /**
    * Validation error message
    */
@@ -24,6 +55,7 @@ export class ScreenlessValidationError extends ScreenlessResult {
  * Indicates a module error
  */
 export class ScreenlessMethodCallError extends ScreenlessResult {
+  readonly type = 'methodCallError';
   /**
    * Error message
    */
@@ -39,6 +71,7 @@ export class ScreenlessMethodCallError extends ScreenlessResult {
  * Indicates that payment was completed successfully
  */
 export class ScreenlessPaid extends ScreenlessResult {
+  readonly type = 'paid';
   /**
    * Transaction id of the completed transaction
    */
@@ -59,6 +92,7 @@ export class ScreenlessPaid extends ScreenlessResult {
  * payment status via transactionId.
  */
 export class ScreenlessPaymentCreated extends ScreenlessResult {
+  readonly type = 'paymentCreated';
   /**
    * Transaction id of the created transaction
    */
@@ -82,6 +116,7 @@ export class ScreenlessPaymentCreated extends ScreenlessResult {
  * - BLIK code or BLIK alias
  */
 export class ScreenlessConfiguredPaymentFailed extends ScreenlessResult {
+  readonly type = 'configuredPaymentFailed';
   /**
    * Transaction id of the created transaction
    */
@@ -105,6 +140,7 @@ export class ScreenlessConfiguredPaymentFailed extends ScreenlessResult {
  * continue the payment.
  */
 export class ScreenlessBlikAmbiguousAlias extends ScreenlessResult {
+  readonly type = 'ambiguousAlias';
   /**
    * Transaction id of the created transaction
    */
@@ -126,6 +162,7 @@ export class ScreenlessBlikAmbiguousAlias extends ScreenlessResult {
  * Indicates that payment was not created because of an error
  */
 export class ScreenlessPaymentError extends ScreenlessResult {
+  readonly type = 'error';
   /**
    * Optional error message
    */

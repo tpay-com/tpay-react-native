@@ -176,6 +176,7 @@ async function startUiPayment() {
     payerContext,
     39.99,
     'transaction description',
+    'description of payment shown to merchant',
     notifications
   );
 
@@ -221,6 +222,7 @@ async function startCreditCardTokenPaymentUi() {
     payer,
     39.99,
     'transaction description',
+    'description of payment shown to merchant',
     notifications
   );
 
