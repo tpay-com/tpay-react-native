@@ -1,18 +1,237 @@
-# react-native-tpay
+# Tpay React Native SDK
 
-The Tpay SDK empowers your app to seamlessly integrate Tpay’s payment functionalities, providing a comprehensive and developer-friendly solution for managing payments.
+[![npm version](https://badge.fury.io/js/react-native-tpay.svg)](https://badge.fury.io/js/react-native-tpay)
+![Static Badge](https://img.shields.io/badge/min_android_sdk-23-blue?logo=android&label=Min%20Android%20SDK)
+![Static Badge](https://img.shields.io/badge/min_ios_sdk-12.0+-blue?logo=apple&label=iOS)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## About
+This SDK allows your app to make payments with Tpay.
 Documentation is available [here](https://tpay-com.github.io/tpay-react-native/).
-## Installation
+
+| Library             | Version                       |
+| ------------------- | ----------------------------- |
+| npm                 | 1.3.8                         |
+| Minimum Android SDK | 23 (Android 6.0, Marshmallow) |
+| Minimum iOS version | 12.0                          |
+
+> [!warning]
+> For this SDK to work you will need `client_id` and `client_secret` tokens. You can find in [merchant's panel](https://panel.tpay.com).
+>
+> If you are partner, you can obtain them in your merchant partner account. For detailed
+> instructions how to do that or how to create such an account
+> check [this site](https://docs-api.tpay.com/en/merchant-accounts/).
+
+> [!tip]
+> To be able to test the SDK properly,
+> use [mock data](https://support.tpay.com/sprzedawca/srodowisko-testowe-sandbox).
+
+
+## Install
 
 ```sh
 npm install react-native-tpay
 ```
 
-## UI Module
+## Configuration
 
-Tpay package contains a UI module. Users can interact with it to make payments.
+> [!note]
+> In this section we will provide examples for each configuration to the TpayConfiguration class
+> you will be able to make.
 
-## Setup
+> [!important]
+> Beneath you will find all configurations that are **MANDATORY**.
+
+### Initialization
+
+At first, you have to configure your app to be able to make any requests by providing SDK info about
+your merchant account.
+Info about `client_id` and `client_secret` you will find in your merchant's panel at `Integration -> API`.
+
+```typescript
+new Merchant(
+  new MerchantAuthorization(
+    'client_id',
+    'client_secret'
+  ),
+  TpayEnvironment.sandbox,
+  new CertificatePinningConfiguration('ssl_pinning'),
+  'blik_alias',
+  new WalletConfiguration(
+    new GooglePayConfiguration('merchant_id'),
+    new ApplePayConfiguration('merchant_id', 'country_code')
+  )
+);
+```
+
+### Environment
+
+Tpay SDK provides two types of environments you can use in your app:
+
+* `TpayEnvironment.sandbox` - used only for tests and in stage/dev flavor.
+* `TpayEnvironment.production` - used for production flavors.
+
+### Payment methods
+
+For users to be able to use a specific payment method you have declare it in the configuration.
+
+| Method                      | Description |
+|-----------------------------| ----------- |
+| BLIK                        | [Web docs](https://docs-api.tpay.com/en/payment-methods/blik/) |
+| Pbl **(Pay-By-Link)**       | [Web docs](https://docs-api.tpay.com/en/payment-methods/pbl/) |
+| Card                        | [Web docs](https://docs-api.tpay.com/en/payment-methods/cards/) |
+| DigitalWallets              | [GOOGLE_PAY](https://docs-api.tpay.com/en/payment-methods/google-pay/) ; [APPLE_PAY](https://docs-api.tpay.com/en/payment-methods/apple-pay/) |
+| InstallmentPayments         | [RATY_PEKAO](https://docs-api.tpay.com/en/payment-methods/installments/) |
+| DeferredPayments **(BNPL)** | [PAY_PO](https://docs-api.tpay.com/en/payment-methods/bnpl/) |
+
+```typescript
+new PaymentMethods(
+  [PaymentMethod.card, PaymentMethod.blik, PaymentMethod.transfer],
+  [DigitalWallet.googlePay, DigitalWallet.applePay],
+  [InstallmentPayment.ratyPekao, InstallmentPayment.payPo],
+);
+```
+
+#### Card
+
+If you decide to enable the credit card payment option, you have to provide SSL certificates.
+
+> [!tip]
+> You can find SSL public key on you merchant panel at section `Integrations -> API -> Cards API`.
+
+> [!tip]
+> You can find public key on you merchant panel:
+> - Acquirer Elavon: `Credit card payments -> API`
+> - Acquirer Pekao: `Integrations -> API -> Cards API`
+
+```typescript
+new CertificatePinningConfiguration('ssl_pinning')
+```
+
+#### Google Pay configuration
+
+In order to be able to use Google Pay method you have to provide your `merchant_id` to the SDK.
+
+> [!tip]
+> Your login name to the merchant panel is your merchant id.
+
+```typescript
+  new WalletConfiguration(
+    new GooglePayConfiguration('merchant_id'),
+  )
+```
+
+#### Apple Pay configuration
+
+In order to be able to use Apple Pay method you have to provide your `merchant_id` and `country_code` to the SDK.
+
+> [!important]
+> To obtain the merchantIdentifier, follow these steps:
+> 1. Log in to your Apple Developer account.
+> 2. Navigate to the `Certificates, Identifiers & Profiles` section.
+> 3. Under `Identifiers,` select `Merchant IDs.`
+> 4. Click the `+` button to create a new Merchant ID.
+> 5. Fill in the required information and associate it with your app's Bundle ID.
+> 6. Once created, the merchant identifier can be found in the list of Merchant IDs.
+> 7. For more details, please follow [Apple Pay documentation](https://developer.apple.com/documentation/passkit/apple_pay/setting_up_apple_pay).
+
+```typescript
+  new WalletConfiguration(
+    new ApplePayConfiguration('merchant_id', 'country_code')
+  )
+```
+
+### Languages
+
+Tpay SDK lets you decide what languages will be available in the Tpay's screen and which one of them
+will be preferred/default.
+
+Right now, SDK allows you to use 2 languages:
+
+* `Language.pl` - polish
+* `Language.en` - english
+
+```typescript
+new Languages(Language.pl, [Language.en, Language.pl]);
+```
+
+### Merchant details
+
+As a merchant, you can configure how information about you will be shown.
+You can set up your `display name`, `city/headquarters` and `regulations link`.
+You can choose to provide different copy for each language, or simply use one for all.
+
+```typescript
+new MerchantDetails(
+  [
+    new LocalizedString(Language.pl, 'Sklep'),
+    new LocalizedString(Language.en, 'Merchant'),
+  ],
+  [
+    new LocalizedString(Language.pl, 'Warszawie'),
+    new LocalizedString(Language.en, 'Warsaw'),
+  ],
+  [
+    new LocalizedString(Language.pl, 'polish URL'),
+    new LocalizedString(Language.en, 'english URL'),
+  ]
+);
+```
+
+> [!warning]
+> Every `LocalizedString` value **MUST NOT** be an empty string!
+> Otherwise this may cause an app crash.
+
+### Summary
+Beneath you will find how a complete configuration should look like.
+
+```typescript
+const merchant = new Merchant(
+  new MerchantAuthorization(
+    'client_id',
+    'client_secret'
+  ),
+  TpayEnvironment.sandbox,
+  new CertificatePinningConfiguration('ssl_pinning'),
+  'blik_alias',
+  new WalletConfiguration(
+    new GooglePayConfiguration('merchant_id'),
+    new ApplePayConfiguration('merchant_id', 'country_code')
+  )
+);
+
+const merchantDetails = new MerchantDetails(
+  [
+    new LocalizedString(Language.pl, 'Sklep'),
+    new LocalizedString(Language.en, 'Merchant'),
+  ],
+  [
+    new LocalizedString(Language.pl, 'Warszawie'),
+    new LocalizedString(Language.en, 'Warsaw'),
+  ],
+  [
+    new LocalizedString(Language.pl, 'polish URL'),
+    new LocalizedString(Language.en, 'english URL'),
+  ]
+);
+
+const languages = new Languages(Language.pl, [Language.en, Language.pl]);
+
+const paymentMethods = new PaymentMethods(
+  [PaymentMethod.card, PaymentMethod.blik, PaymentMethod.transfer],
+  [DigitalWallet.googlePay, DigitalWallet.applePay],
+  [InstallmentPayment.ratyPekao, InstallmentPayment.payPo]
+);
+
+const configuration = new TpayConfiguration(
+  merchant,
+  merchantDetails,
+  languages,
+  paymentMethods
+);
+
+await configure(configuration);
+```
 
 ### Android
 
@@ -23,26 +242,35 @@ to add the following code to your Activity.
 import com.tpay.util.TpayBackpressUtil;
 
 class MainActivity : ReactActivity() {
-    override fun onBackPressed() {
-        if (TpayBackpressUtil.isModuleVisible) {
-            TpayBackpressUtil.onBackPressed()
-        } else {
-            super.onBackPressed()
-        }
+  override fun onBackPressed() {
+    if (TpayBackpressUtil.isModuleVisible) {
+      TpayBackpressUtil.onBackPressed()
+    } else {
+      super.onBackPressed()
     }
+  }
 }
+```
+
+#### Proguard/R8
+
+If you are using Proguard/R8 in your project, you have to add the following rules to the
+`android/app/proguard-rules.pro` file, to keep Tpay SDK classes.
+
+```proguard
+# Keep all Tpay SDK classes
+-keep class com.tpay.sdk.** { *; }
 ```
 
 ### iOS
 
 When integrating the Tpay payment module into your app, it’s important to ensure that the necessary permissions are correctly set up to ensure a smooth user experience.
+The module allows the user to automatically fill the credit card form for secure payment processing. This feature requires you to setup the “Privacy - Camera Usage Description”.
 
-#### Privacy - Camera Usage Description
+### React Native CLI
 
-The module allows the user to automatically fill the credit card form for secure payment processing. This feature requires you to setup the “Privacy - Camera Usage Description” in your app’s Info.plist file.
-
-Integration Steps
-1. Open your project’s Info.plist file.
+Integration Steps:
+1. Open your project’s `Info.plist` file.
 2. Add the key-value pair for the “Privacy - Camera Usage Description” permission, explaining the purpose of camera access. Clearly state that the camera is used to facilitate the automatic filling of the credit card form for secure payment processing.
 
 Example:
@@ -51,7 +279,238 @@ Example:
 <string>We need access to your camera to automatically fill the credit card form for secure payment processing.</string>
 ```
 
-## Handling UI module events
+### Expo Workflow
+
+Integration Steps:
+1. Open your project’s `app.json` file.
+2. Add the key-value pair for the “Privacy - Camera Usage Description” permission, explaining the purpose of camera access. Clearly state that the camera is used to facilitate the automatic filling of the credit card form for secure payment processing.
+3. Add it under `ios -> infoPlist -> NSCameraUsageDescription`
+
+Example:
+```json
+"ios": {
+  "infoPlist": {
+    "NSCameraUsageDescription": "We need access to your camera to automatically fill the credit card form for secure payment processing."
+  }
+},
+```
+
+## Handling payments
+
+Tpay SDK provides two ways of handling payments:
+
+- `Official SDK screens` - you can use Tpay's official screens where you just need to provide "soft"
+  information, like price, description or payer info.
+- `Screenless` - you can use screenless functionalities, where you set callbacks for payments and
+  display all necessary information on your own screens.
+
+## Official SDK screens
+
+To make integration with the SDK faster, we created 3 types of sheets that can be used to handle
+payments:
+
+* `SingleTransaction` - the most simple screen where the user can choose any payment method and proceed with it,
+* `Tokenization` - screen that handles generating payment token from the credit card,
+* `TokenPayment` - screen that handles payment with previously created token for credit card,
+
+### SingleTransaction
+
+SingleTransaction flow opens a UI module and allows the customer to pick one of the defined payment methods.
+This method requires setting up a few things in order to fulfill payment:
+
+* `amount` - simply the price of the transaction
+* `description` - transaction description
+* `hiddenDescription` (optional) - description visible only to the merchant
+* `payerContext` - information about payer
+  * `payer` - information about person who is making the payment
+    * `name` - payer name
+    * `email` - payer email
+    * `phone` - payer phone number
+    * `address` - payer address
+      * `city` - city name
+      * `countryCode` - country code in ISO 3166-1 alpha-2 format
+      * `address` - street address
+      * `postalCode` - postal code
+  * `automaticPaymentMethods` - configuration of automatic payments
+    * `tokenizedCards` - previously saved credit cards
+      * `token` - card token
+      * `cardTails` - last 4 digits of the card
+      * `brand` - card brand
+    * `blikAlias` - previously saved BLIK alias
+      * `value` - alias value
+      * `label` - alias label
+* `notifications` - info about where the merchant should be notified about new transactions
+  * `notificationEmail` - email address to send notification to
+  * `notificationUrl` - URL to send notification to / URL to send tokens for tokenization
+
+```typescript
+const transaction = new SingleTransaction(
+  new PayerContext(
+    new Payer(
+      'John Doe',
+      'john.doe@example.com',
+      '123456789',
+      new Address(
+        'Test Street1',
+        'Warsaw',
+        'PL',
+        '00-007',
+      ),
+    ),
+    new AutomaticPaymentMethods(
+      [
+        new TokenizedCard(
+          'token',
+          '1234',
+          CreditCardBrand.visa,
+        ),
+        new TokenizedCard(
+          'token',
+          '1234',
+          CreditCardBrand.mastercard,
+        ),
+      ],
+      new BlikAlias(
+        true,
+        'alias value',
+        'label'
+      ),
+    ),
+  ),
+  39.99,
+  'transaction description',
+  'hidden description',
+  new Notifications(
+    'https://yourdomain.com/notifications',
+    'email@address'
+  )
+);
+
+await startPayment(transaction);
+```
+
+> [!important]
+> Tpay SDK also supports `NFC` and `camera` card scanning:
+> * `NFC` - Adding card info during transaction, user can tap on the NFC button.
+    Then, if NFC is enabled in the device, after holding physical card near the device, SDK will scan
+    the card's data and automatically fill the form with it.
+> * `Camera` - Adding card info during transaction, user can tap on the camera button.
+    Then, if the camera scans card data successfully, form will be filled automatically.
+
+#### Automatic Payments
+
+Using `SingleTransaction` screen you can set up automatic BLIK or card payments.
+Thanks to that, user will not have to enter BLIK/card data all over again each time making the
+payment.
+
+If user using a card as a payment method will opt-in saving card, on successful payment, on the link
+specified as `Notifications -> url` Tpay backend will send information about the saved card token, tail and
+brand.
+Next, your backend has to send it to you, so you can use this info next time the same user will want
+to pay with the card.
+When you already have all required information, you can add `automaticPaymentMethods` to the `payerContext`.
+
+```typescript
+new AutomaticPaymentMethods(
+  [
+    new TokenizedCard(
+      'token',
+      '1234',
+      CreditCardBrand.visa,
+    ),
+    new TokenizedCard(
+      'token',
+      '1234',
+      CreditCardBrand.mastercard,
+    ),
+  ],
+  new BlikAlias(
+    true,
+    'alias value',
+    'label'
+  ),
+);
+```
+
+## Tokenization
+
+Tpay SDK allows you to make credit card transactions without need of entering card's data each time.
+Instead, you can create and use a token, associated with a specific card and user.
+
+> [!important]
+> There are 2 types of tokens you can use in transactions.
+> * [Simple tokens](https://docs-api.tpay.com/en/tokenization/#tokenization-without-charging) -
+    tokens that go with card data upon transaction,
+> * [Network tokens](https://docs-api.tpay.com/en/tokenization/#tokenization-plus) -
+    tokens that can be used without exposing the card details. Also, this token persists even if
+    card expires and user requests a new one.
+
+> [!warning]
+> For recurring payments, you can simply use created token to make transaction without need of user
+> interaction.
+
+### Creating card token
+
+> [!warning]
+> `notificationUrl` should be the URL handled by your backend, because there will be sent token from
+> the successful token creation.
+
+```typescript
+const transaction = new Tokenization(
+  new Payer(
+    'John Doe',
+    'john.doe@example.com',
+    '123456789',
+    new Address(
+      'Test Street1',
+      'Warsaw',
+      'PL',
+      '00-007',
+    ),
+  ),
+  'https://yourdomain.com/notifications',
+);
+
+await tokenizeCard(transaction);
+```
+
+### Token payment
+
+If you already have card token payment, you can simply proceed with an actual tokenization
+transaction.
+
+> [!warning]
+> `cardToken` is a token sent to your backend during card tokenization process.
+
+```typescript
+const transaction = new TokenPayment(
+  'card_token',
+  new Payer(
+    'John Doe',
+    'john.doe@example.com',
+    '123456789',
+    new Address(
+      'Test Street1',
+      'Warsaw',
+      'PL',
+      '00-007',
+    ),
+  ),
+  10.99,
+  'Payment description',
+  'Hidden description',
+  new Notifications(
+    'https://yourdomain.com/notifications',
+    'email@address',
+  )
+);
+
+await startCardTokenPayment(transaction);
+```
+
+### Common
+Each transaction with a predefined screen returns a result
+that you can use to either show information to the user or e.g. log errors.
 
 ```typescript
 function handleResult(result: Result) {
@@ -91,457 +550,28 @@ function handleResult(result: Result) {
 }
 ```
 
-## Configure Tpay package
-
-```typescript
-async function configureTpay() {
-  const authorization = new MerchantAuthorization('client id', 'client secret');
-  const certificateConfiguration = new CertificatePinningConfiguration(
-    'public key hash'
-  );
-
-  const merchant = new Merchant(
-    authorization,
-    TpayEnvironment.production,
-    certificateConfiguration,
-    'BLIK alias to register',
-    new WalletConfiguration(
-      new GooglePayConfiguration('merchant id'),
-      new ApplePayConfiguration('merchant identifier', 'country code')
-    )
-  );
-
-  const merchantDetails = new MerchantDetails(
-    [
-      new LocalizedString(Language.pl, 'Sklep'),
-      new LocalizedString(Language.en, 'Merchant'),
-    ],
-    [
-      new LocalizedString(Language.pl, 'Warszawie'),
-      new LocalizedString(Language.en, 'Warsaw'),
-    ],
-    [
-      new LocalizedString(Language.pl, 'polish url'),
-      new LocalizedString(Language.en, 'english url'),
-    ]
-  );
-
-  const languages = new Languages(Language.pl, [Language.en, Language.pl]);
-  const paymentMethods = new PaymentMethods(
-    [PaymentMethod.card, PaymentMethod.blik, PaymentMethod.transfer],
-    [DigitalWallet.googlePay, DigitalWallet.applePay],
-    [InstallmentPayment.ratyPekao]
-  );
-
-  const configuration = new TpayConfiguration(
-    merchant,
-    merchantDetails,
-    languages,
-    paymentMethods
-  );
-
-  const result = await configure(configuration);
-  handleResult(result);
-}
-```
-
-## Payment with UI module
-
-```typescript
-async function startUiPayment() {
-  // Create a payer object, phone number and address fields are optional
-  // Name and email fields can be empty, user will fill them in the UI
-  const payer = new Payer('John Doe', 'john.doe@example.com', null, null);
-
-  // Users can choose to save a credit card, it will result in your backend
-  // receiving the tokenized card data, provide it there to enable one click payment.
-  // You can also provide the BLIK alias to enable the one click BLIK payments.
-  // To register the BLIK alias user has to make a payment with 6-digit code first and save the alias.
-  // BLIK one click will be shown in the UI when the provided 'isRegistered' parameter is true.
-  const automaticPaymentMethods = new AutomaticPaymentMethods(
-    [new TokenizedCard('card token', 'card tail', CreditCardBrand.mastercard)],
-    new BlikAlias(true, 'alias value', 'alias label')
-  );
-
-  // Tokenized card and BLIK alias registration data will be sent to the notification url.
-  // Payments will result in a email notifications sent to notification email.
-  const notifications = new Notifications(
-    'https://yourdomain.com/notifications',
-    'store@yourdomain.com'
-  );
-
-  const payerContext = new PayerContext(payer, automaticPaymentMethods);
-
-  const transaction = new SingleTransaction(
-    payerContext,
-    39.99,
-    'transaction description',
-    'description of payment shown to merchant',
-    notifications
-  );
-
-  const result = await startPayment(transaction);
-  handleResult(result);
-}
-```
-
-## Credit card tokenization with UI module
-
-```typescript
-async function startCreditCardTokenizationUi() {
-  // Create a payer object, phone number and address fields are optional
-  // Name and email fields can be empty, user will fill them in the UI
-  const payer = new Payer('John Doe', 'john.doe@example.com', null, null);
-
-  // Tokenized card data will be sent to notification url
-  const tokenization = new Tokenization(
-    payer,
-    'https://yourdomain.com/notifications'
-  );
-
-  const result = await tokenizeCard(tokenization);
-  handleResult(result);
-}
-```
-
-## Credit card token payment with UI module
-
-```typescript
-async function startCreditCardTokenPaymentUi() {
-  // Create a payer object, phone number and address fields are optional
-  // Name and email fields are required, because user cannot fill them in the UI
-  const payer = new Payer('John Doe', 'john.doe@example.com', null, null);
-
-  const notifications = new Notifications(
-    'https://yourdomain.com/notifications',
-    'store@yourdomain.com'
-  );
-
-  const tokenPayment = new TokenPayment(
-    'credit card token',
-    payer,
-    39.99,
-    'transaction description',
-    'description of payment shown to merchant',
-    notifications
-  );
-
-  const result = await startCardTokenPayment(tokenPayment);
-  handleResult(result);
-}
-```
-
 ## Screenless Payments
 
-Tpay package provides methods to create payments without displaying the UI module.
+Screenless payments are a special type of payment functionality that gives you the whole power of
+payment process, but do not limit you to using predefined Tpay screens.
 
-## Handling screenless events
+### Get payment channels
 
-```typescript
-function handleScreenlessResult(result: ScreenlessResult) {
-  if (result instanceof ScreenlessPaid) {
-    // payment completed successfully
-    // read transactionId via result.transactionId
-  }
-  if (result instanceof ScreenlessPaymentCreated) {
-    // payment was successfully created
-    // if it was a BLIK payment user has to accept it in bank app
-    // if it was a credit card, transfer or installment payment you have to
-    // display result.paymentUrl to finish the payment
-    // it is advised to use long polling mechanism to observe payment status
-    // you can get transaction id from result.transactionId
-  }
-  if (result instanceof ScreenlessPaymentError) {
-    // creating payment failed
-    // read error message via result.error
-  }
-  if (result instanceof ScreenlessConfiguredPaymentFailed) {
-    // creating payment failed because of error with:
-    // - credit card data or credit card token
-    // - BLIK code or BLIK alias
-  }
-  if (result instanceof ScreenlessBlikAmbiguousAlias) {
-    // when using BLIK payment with alias this result indicates
-    // that user has alias registered in more than one bank
-    // display result.aliases to the user and
-    // continue payment using screenlessAmbiguousBLIKPayment(...) method
-  }
-  if (result instanceof ScreenlessValidationError) {
-    // provided data is invalid
-    // check error message via result.message
-  }
-  if (result instanceof ScreenlessMethodCallError) {
-    // package error occurred
-    // read error message via result.message
-  }
-}
-```
+To be able to use screenless functionalities you will need to know which payment methods are
+available to your merchant account. To get them, you can simply call `getAvailablePaymentChannels`
+method on the `TpayPlatform.instance` and set up result observer for them.
 
-## Common screenless objects
-
-Screenless payments require the following objects.
+> [!warning]
+> Available methods needs to be filtered by the `amount` of the transaction, because some payment
+> methods have specific constraints, like minimum or maximum amount.
 
 ```typescript
-// Create a payer object, phone number and address fields are optional
-// Name and email fields are required in screenless payments
-const payer = new Payer('John Doe', 'john.doe@example.com', null, null);
+async function getPaymentMethods() {
+  const result = await getAvailablePaymentChannels();
 
-// Hidden description can be used to search for transaction internally.
-// Tpay website (if needed) will open in the provided language.
-const paymentDetails = new PaymentDetails(
-  39.99,
-  'transaction description',
-  'hidden description',
-  Language.pl
-);
-
-// User will be redirected to these urls after a payment on the Tpay website.
-// Catch these urls in your web view to know if the payment was successful or not.
-const redirects = new Redirects(
-  'https://yourdomain.com/success',
-  'https://yourdomain.com/error'
-);
-
-// Tokenized card and BLIK alias registration data will be sent to the notification url.
-// Payments will result in a email notifications sent to notification email.
-const notifications = new Notifications(
-  'https://yourdomain.com/notifications',
-  'store@yourdomain.com'
-);
-
-const callbacks = new Callbacks(redirects, notifications);
-```
-
-## Screenless BLIK payment
-
-Using BLIK user can pay with 6-digit code or alias (for returning customers).
-
-```typescript
-async function startScreenlessBlikPayment() {
-  // You have to provide either code or alias.
-  // If you provide both, package will try to register the alias.
-  // One alias can be registered in multiple banks.
-  const blikPayment = new BlikPayment(
-    '6-digit code',
-    new BlikAlias(true, 'alias value', 'alias label'),
-    paymentDetails,
-    payer,
-    callbacks
-  );
-
-  const screenlessResult = await screenlessBLIKPayment(blikPayment);
-  handleScreenlessResult(screenlessResult);
-}
-```
-
-## Screenless ambiguous BLIK payment
-
-screenlessBLIKPayment(...) method can return a ScreenlessBlikAmbiguousAlias result,
-this means that user has BLIK alias registered in more than one bank.
-You need to display ambiguous aliases provided in ScreenlessBlikAmbiguousAlias result to the user.
-After that, you need to continue the payment with ambiguous alias selected by user using screenlessAmbiguousBLIKPayment(...) method.
-
-```typescript
-async function startAmbiguousBlikPayment(
-  result: ScreenlessBlikAmbiguousAlias,
-  ambiguousAlias: AmbiguousAlias
-) {
-  // BLIK alias used to create payment with screenlessBLIKPayment(...) method
-  const blikAlias = new BlikAlias(true, 'alias value', 'alias label');
-
-  // Provide transaction id from result and ambiguous alias selected by user
-  const ambiguousBlikPayment = new AmbiguousBlikPayment(
-    result.transactionId,
-    blikAlias,
-    ambiguousAlias
-  );
-
-  const screenlessResult = await screenlessAmbiguousBLIKPayment(
-    ambiguousBlikPayment
-  );
-  handleScreenlessResult(screenlessResult);
-}
-```
-
-## Screenless transfer payment
-
-Transfer payment requires a channelId of bank in Tpay system.
-
-```typescript
-async function startScreenlessTransferPayment() {
-  // Provide channelId of a bank
-  const transferPayment = new TransferPayment(
-    3,
-    paymentDetails,
-    payer,
-    callbacks
-  );
-
-  const screenlessResult = await screenlessTransferPayment(transferPayment);
-  handleScreenlessResult(screenlessResult);
-}
-```
-
-## Screenless Raty Pekao payment
-
-Raty Pekao payment requires a channelId of Raty Pekao variant.
-
-```typescript
-async function startScreenlessRatyPekaoPayment() {
-  // Provide channelId of Raty Pekao variant
-  const ratyPekaoPayment = new RatyPekaoPayment(
-    80,
-    paymentDetails,
-    payer,
-    callbacks
-  );
-
-  const screenlessResult = await screenlessRatyPekaoPayment(ratyPekaoPayment);
-  handleScreenlessResult(screenlessResult);
-}
-```
-
-## Screenless PayPo payment
-```typescript
-async function startScreenlessPayPoPayment() {
-  const payPoPayment = new PayPoPayment(paymentDetails, payer, callbacks);
-  const screenlessResult = await screenlessPayPoPayment(payPoPayment);
-  handleScreenlessResult(screenlessResult);
-}
-```
-
-## Screenless credit card payment
-
-Credit card payment can be created with credit card data or credit card token (for returning customers).
-
-```typescript
-async function startScreenlessCreditCardPayment() {
-  const creditCard = new CreditCard(
-    'card number',
-    new ExpirationDate('month', 'year'),
-    'cvv',
-    // Configure if the credit card should be tokenized after payment
-    // Provide your domain, it's used while encrypting the credit card data
-    new CreditCardConfig(false, 'yourdomain.com', null)
-  );
-  const creditCardToken = 'card token';
-
-  // You have to provide either credit card or credit card token
-  const creditCardPayment = new CreditCardPayment(
-    creditCard,
-    creditCardToken,
-    paymentDetails,
-    payer,
-    callbacks
-  );
-
-  const screenlessResult = await screenlessCreditCardPayment(creditCardPayment);
-  handleScreenlessResult(screenlessResult);
-}
-```
-
-## Screenless Google Pay payment (Android only)
-
-Google Pay payment requires a Google Pay token.
-
-```typescript
-async function startScreenlessGooglePayPayment() {
-  const googlePayPayment = new GooglePayPayment(
-    'Google Pay token',
-    paymentDetails,
-    payer,
-    callbacks
-  );
-
-  const screenlessResult = await screenlessGooglePayPayment(googlePayPayment);
-  handleScreenlessResult(screenlessResult);
-}
-```
-
-## Screenless Apple Pay payment (iOS only)
-
-Apple Pay payment requires a Apple Pay token.
-
-```typescript
-async function startScreenlessApplePayPayment() {
-  const applePayPayment = new ApplePayPayment(
-    'Apple Pay token',
-    paymentDetails,
-    payer,
-    callbacks
-  );
-
-  const screenlessResult = await screenlessApplePayPayment(applePayPayment);
-  handleScreenlessResult(screenlessResult);
-}
-```
-
-## Google Pay utils (Android only)
-
-Tpay package offers few convenience methods to interact with Google Pay.
-
-```typescript
-async function googlePayUtils() {
-  // Create configuration object by providing the final price,
-  // your store name, your merchant id and a Google Pay environment
-  const googlePayUtilsConfiguration = new GooglePayUtilsConfiguration(
-    39.99,
-    'your store name',
-    'your merchant id',
-    GooglePayEnvironment.production,
-    null
-  );
-  const configurationResult = await configureGooglePayUtils(
-    googlePayUtilsConfiguration
-  );
-
-  if (configurationResult instanceof GooglePayConfigureError) {
-    // configuration failed
-    // check error message via configurationResult.message
-  }
-  if (configurationResult instanceof GooglePayConfigureSuccess) {
-    // utils are configured
-
-    const isAvailable = await isGooglePayAvailable();
-    if (isAvailable) {
-      // show Google Pay button
-
-      // if user clicks on the button do the following
-      const googlePayOpenResult = await openGooglePay();
-
-      if (googlePayOpenResult instanceof GooglePayOpenSuccess) {
-        // credit card data was received
-        // read Google Pay token via googlePayOpenResult.token
-        // and use it with GooglePayPayment
-      }
-      if (googlePayOpenResult instanceof GooglePayOpenCancelled) {
-        // user closed Google Pay
-      }
-      if (googlePayOpenResult instanceof GooglePayOpenNotConfigured) {
-        // Google Pay utils not configured
-      }
-      if (googlePayOpenResult instanceof GooglePayOpenUnknownError) {
-        // unknown error has occurred
-      }
-    }
-  }
-}
-```
-
-## Fetch payment channels
-
-Fetch available payment channels for your merchant account. Filter channels based on availability and payment constraints.
-
-```typescript
-async function fetchPaymentChannels() {
-  const result = await getPaymentChannels();
   if (result instanceof PaymentChannelsSuccess) {
-    // payment channels received
-
-    result.channels.forEach((channel) => {
-      // channel can have payment constraints
-      // that need to be satisfied, otherwise the payment creation will fail
-      channel.constraints.forEach((constraint) => {
+    result.channels.forEach(channel => {
+      channel.constraints.forEach(constraint => {
         switch (constraint.type) {
           case PaymentConstraintType.amount:
             // check if your payment amount is between
@@ -552,17 +582,597 @@ async function fetchPaymentChannels() {
             // - only maximum value
             // - minimum and maximum values
             const amountConstraint = constraint as AmountPaymentConstraint;
+            break;
         }
-      });
 
-      // display payment channel if all payment constraints are satisfied
+        // display payment channel if all payment constraints are satisfied
+      });
     });
   }
+
   if (result instanceof PaymentChannelsError) {
-    // error occurred
-    // read error message via result.message
+    // handle error
   }
 }
+```
+
+### Configuration
+
+Before you run any screenless payment we do recommend setting up a function to handle specific payment results.
+You will need this to be able to monitor each payment status, i.e. it's status in real time. To do so,
+create a function, that will accept `ScreenlessResult` as a parameter and handle each of them.
+
+> [!warning]
+> Note that long polling mechanism will start only when it's needed:
+> - `ScreenlessPaymentCreated`: when payment is created and you have to display payment URL.
+> - `ScreenlessBlikAmbiguousAlias`: when payment is created and there are more than one BLIK alias registered,
+    so you have to display them to the user and continue payment with selected one.
+
+```typescript
+function handleScreenlessResult(result: ScreenlessResult) {
+  if (result instanceof ScreenlessPaid) {
+    // payment completed successfully
+  }
+  if (result instanceof ScreenlessPaymentCreated) {
+    // payment created, use result.paymentUrl to redirect the user to the payment page
+  }
+  if (result instanceof ScreenlessPaymentError) {
+    // creating payment failed
+  }
+  if (result instanceof ScreenlessConfiguredPaymentFailed) {
+    // creating payment failed because of error with:
+    // - credit card data or credit card token
+    // - BLIK code or BLIK alias
+  }
+  if (result instanceof ScreenlessBlikAmbiguousAlias) {
+    // single alias has been registered multiple times, use result.aliases to let user choose desired one
+  }
+  if (result instanceof ScreenlessValidationError) {
+    // passed data is incorrect
+  }
+  if (result instanceof ScreenlessMethodCallError) {
+    // something went wrong with the plugin
+  }
+}
+```
+
+### Screenless Credit Card Payment
+
+CreditCardPayment allows you to create payments with credit card data.
+
+```typescript
+const transaction = new CreditCardPayment(
+  new CreditCard(
+    'card_number',
+    new ExpirationDate('12', '24'),
+    '123',
+    new CreditCardConfig(
+      false,
+      'yourstore.com',
+      null,
+    ),
+  ),
+  null,
+  new PaymentDetails(
+    19.99,
+    'transaction description',
+    'hidden description',
+    Language.pl,
+  ),
+  new Payer(
+    'John Doe',
+    'john.doe@example.com',
+    '123456789',
+    new Address(
+      'Test Street1',
+      'Warsaw',
+      'PL',
+      '00-007',
+    ),
+  ),
+  new Callbacks(
+    new Redirects('https://success.url', 'https://error.url'),
+    new Notifications(
+      'https://yourdomain.com/notifications',
+      'email@address',
+    ),
+  )
+);
+
+const result = await screenlessCreditCardPayment(transaction);
+
+handleScreenlessResult(result);
+```
+
+> [!warning]
+> If CreditCardPayment returns `ScreenlessPaymentCreated` result, you have to handle `paymentUrl`
+> sent with it and redirect user to it in order to complete the payment.
+
+#### Tokenization
+
+You can also Opt-in to generate a credit card token for future payments
+if you want to let users pay for transactions with previously used card.
+To do so, in `creditCard -> config` object, set the `shouldSave` to true.
+
+```typescript
+new CreditCardConfig(
+  true,
+  'yourstore.com',
+  null,
+)
+```
+
+> [!warning]
+> Generated card token will be sent to `notificationUrl` specified in the notifications callbacks.
+
+If you already have a credit card token, you can then set up token payment omitting credit card
+info.
+To do so, use `creditCardToken` instead of `creditCard` field.
+
+```typescript
+const transaction = new CreditCardPayment(
+  null,
+  'creadit_card_token',
+  new PaymentDetails(
+    19.99,
+    'transaction description',
+    'hidden description',
+    Language.pl,
+  ),
+  new Payer(
+    'John Doe',
+    'john.doe@example.com',
+    '123456789',
+    new Address(
+      'Test Street1',
+      'Warsaw',
+      'PL',
+      '00-007',
+    ),
+  ),
+  new Callbacks(
+    new Redirects('https://success.url', 'https://error.url'),
+    new Notifications(
+      'https://yourdomain.com/notifications',
+      'email@address',
+    ),
+  )
+);
+
+const result = await screenlessCreditCardPayment(transaction);
+
+handleScreenlessResult(result);
+```
+
+#### Recurring Payments
+
+> [!important]
+> Right now, ReactNative's Tpay SDK does not support recurring payments.
+> If you'd like to implement them manually,
+> check our [API support for recurring payments](https://docs.sandbox.tpay.com/en/first-steps/integration-methods/).
+
+### Screenless BLIK payment
+Tpay SDK let's make transactions with BLIK as well. Simply use `BLIKPayment` class.
+
+```typescript
+const blikPayment = new BlikPayment(
+  'blik_code',
+  null,
+  new PaymentDetails(
+    27.99,
+    'transaction description',
+    'hidden description',
+    Language.pl,
+  ),
+  new Payer(
+    'John Doe',
+    'john.doe@example.com',
+    '123456789',
+    new Address(
+      'Test Street1',
+      'Warsaw',
+      'PL',
+      '00-007',
+    ),
+  ),
+  new Callbacks(
+    new Redirects('https://success.url', 'https://error.url'),
+    new Notifications(
+      'https://yourdomain.com/notifications',
+      'email@address',
+    ),
+  ),
+);
+
+const screenlessResult = await screenlessBLIKPayment(blikPayment);
+
+handleScreenlessResult(screenlessResult);
+```
+
+#### BLIK Alias Payment
+
+If you have for example a returning users and you want to make their payments with BLIK even
+smoother,
+you can register BLIK Alias for them, so they will only be prompted to accept payment in their
+banking app,
+without need of entering BLIK code each time they want to make the payment.
+
+> [!warning]
+> In order to register alias for a user/payment, you have to set `isRegistered` parameter to `false`.
+> Then, a successful payment will register the alias in Tpay system
+> and next time user will be able to use it.
+
+```typescript
+const blikPayment = new BlikPayment(
+  '777123',
+  new BlikAlias(false, '1234', 'label_1234'),
+  // rest of the BLIKPayment configuration
+);
+```
+
+If the payment were successful, you can assume an alias was created and can be used for the future
+payments.
+
+> [!warning]
+> If you already have registered alias for a user, you can set up `isRegistered` parameter to `true`.
+
+> [!warning]
+> To be able to pay with BLIK alias, you **MUST** set the code parameter to `null`.
+
+```typescript
+const blikPayment = new BlikPayment(
+  null,
+  new BlikAlias(false, '1234', 'label_1234'),
+  // rest of the BLIKPayment configuration
+);
+```
+
+#### BLIK Ambiguous Alias Payment
+
+Sometimes, there is a possibility for one alias to be registered more than once. For example, if
+you register alias associated with one user for the multiple banks.
+In such a situation, you have to fetch those aliases from Tpay API and show them to user to let him
+choose one for the payment.
+
+In BLIKPayment's call in the execute method you can get `ScreenlessBlikAmbiguousAlias`
+type of result,
+that will indicate that current alias was registered more than once.
+This result holds all possible variations of the alias you used to start payment with in `aliases`
+field.
+You have to simply show them to the user, let him choose, and then use the chosen alias to retry the
+payment.
+
+```typescript
+if (result instanceof ScreenlessBlikAmbiguousAlias) {
+  showAmbiguousAliases(result.aliases);
+}
+```
+
+> [!warning]
+> In such scenario, you have to use different class to make the payment than at the beginning.
+> ```typescript
+> const blikPayment = new AmbiguousBlikPayment(
+>   transactionId,
+>   new BlikAlias(true, '1234', 'label_1234'),
+>   new AmbiguousAlias('name','code',),
+> );
+>
+> const screenlessResult = await screenlessAmbiguousBLIKPayment(blikPayment);
+>
+> handleScreenlessResult(screenlessResult);
+> ```
+
+> [!important]
+> Right now, Tpay SDK does NOT support recurring payments with BLIK
+> In order to achieve that, check
+> our [API support for BLIK recurring payments](https://docs-api.tpay.com/en/payment-methods/blik/#blik-recurring-payments).
+
+### Screenless Transfer Payment
+
+Tpay SDK allows you to make transfer payments with bank available to your merchant account.
+
+> [!tip]
+> To get banks with their channel ids check
+> the [Get Payment Channels](https://docs-api.tpay.com/en/first-steps/list-of-payment-methods/)
+> section.
+
+After your customer chooses their bank from the list, you can use it's `channelId` to make the payment.
+
+```typescript
+const transaction = new TransferPayment(
+  15,
+  new PaymentDetails(
+    0.15,
+    'transaction description',
+    'hidden description',
+    Language.pl,
+  ),
+  new Payer(
+    'John Doe',
+    'john.doe@example.com',
+    '123456789',
+    new Address(
+      'Test Street1',
+      'Warsaw',
+      'PL',
+      '00-007',
+    ),
+  ),
+  new Callbacks(
+    new Redirects('https://success.url', 'https://error.url'),
+    new Notifications(
+      'https://yourdomain.com/notifications',
+      'email@address',
+    ),
+  ),
+);
+
+const screenlessResult = await screenlessTransferPayment(transaction);
+
+handleScreenlessResult(screenlessResult);
+```
+
+> [!warning]
+> If TransferPayment returns `ScreenlessPaymentCreated` result, you have to handle `paymentUrl`
+> sent with it and redirect user to it in order to complete the payment.
+
+### Screenless Installment Payments
+
+Tpay SDK allows you to create long term installment payments.
+
+```typescript
+const transaction = new RatyPekaoPayment(
+  15,
+  new PaymentDetails(
+    71.15,
+    'transaction description',
+    'hidden description',
+    Language.pl,
+  ),
+  new Payer(
+    'John Doe',
+    'john.doe@example.com',
+    '123456789',
+    new Address(
+      'Test Street1',
+      'Warsaw',
+      'PL',
+      '00-007',
+    ),
+  ),
+  new Callbacks(
+    new Redirects('https://success.url', 'https://error.url'),
+    new Notifications(
+      'https://yourdomain.com/notifications',
+      'email@address',
+    ),
+  ),
+);
+
+const screenlessResult = await screenlessRatyPekaoPayment(transaction);
+
+handleScreenlessResult(screenlessResult);
+```
+
+> [!warning]
+> If RatyPekaoPayment returns `ScreenlessPaymentCreated` result, you have to handle `paymentUrl`
+> sent with it and redirect user to it in order to complete the payment.
+
+### Screenless Deferred Payments
+
+Tpay SDK allows you to create deferred payments (BNPL) using PayPo method.
+
+> [!warning]
+> For PayPo payment to work, amount of the payment must be at least 40PLN!
+> For more information about PayPo payments
+> check [our PayPo documentation](https://docs-api.tpay.com/en/payment-methods/bnpl/#paypo).
+
+> [!tip]
+> For sandbox, working phone number is `500123456`
+
+```typescript
+async function startScreenlessPayPoPayment() {
+  const payPoPayment = new PayPoPayment(paymentDetails, payer, callbacks);
+  const screenlessResult = await screenlessPayPoPayment(payPoPayment);
+  handleScreenlessResult(screenlessResult);
+}
+```
+
+> [!warning]
+> If PayPoPayment returns `ScreenlessPaymentCreated` result, you have to handle `paymentUrl`
+> sent with it and redirect user to it in order to complete the payment.
+
+## Screenless Google Pay payment (Android only)
+
+Google Pay payment requires a Google Pay token.
+
+```typescript
+const transaction = new PayPoPayment(
+  new PaymentDetails(
+    71.15,
+    'transaction description',
+    'hidden description',
+    Language.pl,
+  ),
+  new Payer(
+    'John Doe',
+    'john.doe@example.com',
+    '123456789',
+    new Address(
+      'Test Street1',
+      'Warsaw',
+      'PL',
+      '00-007',
+    ),
+  ),
+  new Callbacks(
+    new Redirects('https://success.url', 'https://error.url'),
+    new Notifications(
+      'https://yourdomain.com/notifications',
+      'email@address',
+    ),
+  ),
+);
+
+const screenlessResult = await screenlessPayPoPayment(transaction);
+
+handleScreenlessResult(screenlessResult);
+```
+
+> [!warning]
+> If PayPoPayment returns `ScreenlessPaymentCreated` result, you have to handle `paymentUrl`
+> sent with it and redirect user to it in order to complete the payment.
+
+### Screenless Google Pay Payment (Android only)
+
+Tpay SDK allows you to perform Google Pay transactions.
+
+```typescript
+const transaction = new GooglePayPayment(
+  'google_pay_token',
+  new PaymentDetails(
+    71.15,
+    'transaction description',
+    'hidden description',
+    Language.pl,
+  ),
+  new Payer(
+    'John Doe',
+    'john.doe@example.com',
+    '123456789',
+    new Address(
+      'Test Street1',
+      'Warsaw',
+      'PL',
+      '00-007',
+    ),
+  ),
+  new Callbacks(
+    new Redirects('https://success.url', 'https://error.url'),
+    new Notifications(
+      'https://yourdomain.com/notifications',
+      'email@address',
+    ),
+  ),
+);
+
+const screenlessResult = await screenlessGooglePayPayment(transaction);
+
+handleScreenlessResult(screenlessResult);
+```
+
+> [!warning]
+> If GooglePayPayment returns `ScreenlessPaymentCreated` result, you have to handle `paymentUrl`
+> sent with it and redirect user to it in order to complete the payment.
+
+> [!warning]
+> Take under consideration, that choosing this option,
+> you have to configure whole Google Wallet SDK and fetch Google Pay token on your own.
+> For `ANDROID` system only, we provide a bit smoother way of handling Google Pay transactions with our wrappers.
+
+#### Google Pay Utils (Android only)
+
+If you do not want to configure whole Google Pay functionality, you can use `GooglePlayUtil` class.
+It will handle all payment, with additional info in bottom sheet and send you all the needed info in
+callback.
+
+> [!important]
+> To use GooglePayUtil, first, you have to configure them it.
+
+```typescript
+const config = new GooglePayUtilsConfiguration(
+  19.71,
+  'Test Merchant',
+  'merchant_id',
+  GooglePayEnvironment.test,
+  null,
+);
+
+const configResult = await configureGooglePayUtils(config);
+
+if (configResult instanceof GooglePayConfigureError) {
+  // handle error
+} else if (configResult instanceof GooglePayConfigureSuccess) {
+  // handle success
+}
+```
+
+> [!warning]
+> Before you use our utils, make sure Google Pay is enabled in the device. Use `isGooglePayAvailable` method.
+
+```typescript
+const isAvailable = await isGooglePayAvailable()
+
+if (isAvailable) {
+  // display Google Pay button
+}
+```
+
+Next, you can open Google Pay module and let the user choose his credit card, so you can use it to make
+the payment.
+
+```typescript
+const googlePayResult = await openGooglePay()
+
+if (googlePayResult instanceof GooglePayOpenSuccess) {
+  // credit card data was received
+}
+else if (googlePayResult instanceof GooglePayOpenCancelled) {
+  // user closed Google Pay
+}
+else if (googlePayResult instanceof GooglePayOpenNotConfigured) {
+  // Google Pay utils not configured
+}
+else if (googlePayResult instanceof GooglePayOpenUnknownError) {
+  // unknown error has occurred
+}
+```
+
+> [!important]
+> If `googlePayResult` returns `GooglePayOpenSuccess`, you **HAVE TO** use it's content to make an actual
+> payment buy using `GooglePayPayment` and `screenlessGooglePayPayment`.
+
+### Screenless Apple Pay payment
+
+Tpay SDK allows you to perform Apple Pay transactions.
+
+> [!warning]
+> To be able to complete Apple Pay payment, you will need `apple_pay_token`. You **HAVE TO**
+> acquire a token by yourself. To do that check
+> official [Apple Pay documentation](https://developer.apple.com/design/human-interface-guidelines/apple-pay#app-top)
+
+```typescript
+const applePayPayment = new ApplePayPayment(
+  'apple_pay_token',
+  new PaymentDetails(
+    71.15,
+    'transaction description',
+    'hidden description',
+    Language.pl,
+  ),
+  new Payer(
+    'John Doe',
+    'john.doe@example.com',
+    '123456789',
+    new Address(
+      'Test Street1',
+      'Warsaw',
+      'PL',
+      '00-007',
+    ),
+  ),
+  new Callbacks(
+    new Redirects('https://success.url', 'https://error.url'),
+    new Notifications(
+      'https://yourdomain.com/notifications',
+      'email@address',
+    ),
+  ),
+);
+
+const screenlessResult = await screenlessApplePayPayment(applePayPayment);
+
+handleScreenlessResult(screenlessResult);
 ```
 
 ## License
