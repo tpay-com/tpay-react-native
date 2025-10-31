@@ -21,6 +21,8 @@ fun String.isEmailValid(): Boolean {
   }
 }
 
+fun String.isEmailValidForScreenless(): Boolean = true
+
 fun String.toEnvironment(): Environment {
   return when (this) {
     Environment.PRODUCTION.name.lowercase() -> Environment.PRODUCTION

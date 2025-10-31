@@ -60,7 +60,7 @@ open class ScreenlessPayment(json: String) : JSONObject(json) {
       throw ValidationException(ValidationMessages.PAYER_EMAIL_INVALID)
     }
     notifications?.let {
-      if (!notifications.notificationEmail.isEmailValid()) {
+      if (!notifications.notificationEmail.isEmailValidForScreenless()) {
         throw ValidationException(ValidationMessages.NOTIFICATION_EMAIL_INVALID)
       }
     }
