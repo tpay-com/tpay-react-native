@@ -4,7 +4,7 @@ extension Transportation {
 
         // MARK: - Properties
 
-        let channelId: String
+        let channelId: Int
         let bankName: String
         let paymentDetails: PaymentDetails
         let payer: Payer

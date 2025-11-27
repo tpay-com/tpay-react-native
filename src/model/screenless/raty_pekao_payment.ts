@@ -16,7 +16,7 @@ export class RatyPekaoPayment extends ScreenlessPayment {
     channelId: number,
     paymentDetails: PaymentDetails,
     payer: Payer,
-    callbacks: Callbacks | null
+    callbacks: Callbacks
   ) {
     super(paymentDetails, payer, callbacks);
     this.channelId = channelId;

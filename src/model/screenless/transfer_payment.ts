@@ -8,17 +8,20 @@ import { ScreenlessPayment } from "./screenless_payment";
  */
 export class TransferPayment extends ScreenlessPayment {
   channelId: number;
+  bankName: string;
 
   /**
    * @param channelId - channel id of a bank in Tpay system
    */
   constructor(
     channelId: number,
+    bankName: string,
     paymentDetails: PaymentDetails,
     payer: Payer,
-    callbacks: Callbacks | null
+    callbacks: Callbacks
   ) {
     super(paymentDetails, payer, callbacks);
     this.channelId = channelId;
+    this.bankName = bankName;
   }
 }

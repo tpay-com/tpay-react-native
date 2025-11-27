@@ -16,7 +16,7 @@ export class GooglePayPayment extends ScreenlessPayment {
     token: string,
     paymentDetails: PaymentDetails,
     payer: Payer,
-    callbacks: Callbacks | null
+    callbacks: Callbacks
   ) {
     super(paymentDetails, payer, callbacks);
     this.token = token;

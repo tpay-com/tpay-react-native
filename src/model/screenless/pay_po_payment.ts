@@ -10,7 +10,7 @@ export class PayPoPayment extends ScreenlessPayment {
   constructor(
     paymentDetails: PaymentDetails,
     payer: Payer,
-    callbacks: Callbacks | null
+    callbacks: Callbacks
   ) {
     super(paymentDetails, payer, callbacks);
   }

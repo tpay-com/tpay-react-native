@@ -8,7 +8,7 @@ import type { PaymentDetails } from "./payment_details";
 export class ScreenlessPayment {
   paymentDetails: PaymentDetails;
   payer: Payer;
-  callbacks: Callbacks | null;
+  callbacks: Callbacks;
 
   /**
    * @param paymentDetails - information about price and description
@@ -18,7 +18,7 @@ export class ScreenlessPayment {
   constructor(
     paymentDetails: PaymentDetails,
     payer: Payer,
-    callbacks: Callbacks | null
+    callbacks: Callbacks
   ) {
     this.paymentDetails = paymentDetails;
     this.payer = payer;

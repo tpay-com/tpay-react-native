@@ -23,7 +23,7 @@ export class CreditCardPayment extends ScreenlessPayment {
     creditCardToken: string | null,
     paymentDetails: PaymentDetails,
     payer: Payer,
-    callbacks: Callbacks | null
+    callbacks: Callbacks
   ) {
     super(paymentDetails, payer, callbacks);
     this.creditCard = creditCard;

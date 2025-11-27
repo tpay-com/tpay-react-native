@@ -23,7 +23,7 @@ export class BlikPayment extends ScreenlessPayment {
     alias: BlikAlias | null,
     paymentDetails: PaymentDetails,
     payer: Payer,
-    callbacks: Callbacks | null
+    callbacks: Callbacks
   ) {
     super(paymentDetails, payer, callbacks);
     this.code = code;

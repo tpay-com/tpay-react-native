@@ -16,7 +16,7 @@ export class ApplePayPayment extends ScreenlessPayment {
     applePayToken: string,
     paymentDetails: PaymentDetails,
     payer: Payer,
-    callbacks: Callbacks | null
+    callbacks: Callbacks
   ) {
     super(paymentDetails, payer, callbacks);
     this.applePayToken = applePayToken;
