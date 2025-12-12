@@ -159,7 +159,6 @@ async function startScreenlessTransferPayment() {
   // Provide channelId of a bank
   const transferPayment = new TransferPayment(
     3,
-    "bank name",
     paymentDetails,
     payer,
     callbacks,
