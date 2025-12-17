@@ -315,10 +315,10 @@ PODS:
   - React-jsinspector (0.72.17)
   - React-logger (0.72.17):
     - glog
-  - react-native-tpay (1.3.11):
+  - react-native-tpay (1.3.13):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
-    - Tpay-SDK (= 1.3.6)
+    - Tpay-SDK (= 1.3.7)
   - React-NativeModulesApple (0.72.17):
     - hermes-engine
     - React-callinvoker
@@ -430,7 +430,7 @@ PODS:
     - React-logger (= 0.72.17)
     - React-perflogger (= 0.72.17)
   - SocketRocket (0.6.1)
-  - Tpay-SDK (1.3.6)
+  - Tpay-SDK (1.3.7)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -590,7 +590,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 8d95d2ed8969c2ce7eb8b4bfaccb0bb9c0423761
   React-jsinspector: 853b8631b908636bb09ef77cb217376c38a0c8ff
   React-logger: afa402da502a35728c9073804b1802861783a996
-  react-native-tpay: 6af3f874c0884a73daae82b6303e7ed79b76d6fa
+  react-native-tpay: dc729981c687b4724b4ca9fb8562a04f8d72d3fd
   React-NativeModulesApple: a3b3019ffee56cf78bbf09c48e056072f3bb4ea4
   React-perflogger: 785b0063af5178298a61b54bb46aae9a19c7bbb5
   React-RCTActionSheet: 84f37b34bd77249263ace75471d6664393c29972
@@ -609,7 +609,7 @@ SPEC CHECKSUMS:
   React-utils: 389181b1411d047f3d9c4913930b9e806d59d0b1
   ReactCommon: 561cfc1683ccdebe8a377b4616958ea6a1f62d91
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
-  Tpay-SDK: 0642d9f728101ae5339a6f86768c054446872eff
+  Tpay-SDK: 7c00be150a828e3a171b968d7529cda5a0f8600d
   Yoga: ef534101bb891fb09bae657417f34d399c1efe38
 
 PODFILE CHECKSUM: 3b34f23e6db96b8c2e9592865219fba765ababac
