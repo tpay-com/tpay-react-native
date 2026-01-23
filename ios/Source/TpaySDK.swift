@@ -72,7 +72,8 @@ final class TpayRNModule: NSObject, RCTBridgeModule {
 
         DispatchQueue.main.async { [weak self] in
             do {
-                try self?.paymentPresentation.presentPayment(for: singleTransaction)
+                try TpayModule.configure(callbacks: singleTransaction.callbacks)
+                try self?.paymentPresentation.presentPayment(for: singleTransaction.singleTransaction)
             } catch {
                 safeResolve(ConfigurationResult.configurationFailure(error: error).toJson())
             }
@@ -89,7 +90,8 @@ final class TpayRNModule: NSObject, RCTBridgeModule {
 
         DispatchQueue.main.async { [weak self] in
             do {
-                try self?.tokenCardPresentation.presentPayment(for: singleTransaction)
+                try TpayModule.configure(callbacks: singleTransaction.callbacks)
+                try self?.tokenCardPresentation.presentPayment(for: singleTransaction.singleTransaction)
             } catch {
                 resolve(ConfigurationResult.configurationFailure(error: error).toJson())
             }
