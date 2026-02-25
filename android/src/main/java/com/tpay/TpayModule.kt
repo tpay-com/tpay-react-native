@@ -14,7 +14,6 @@ import com.tpay.util.TpayUtil
 import com.tpay.util.JsonUtil
 import com.tpay.sdk.api.payment.*
 import com.tpay.delegate.*
-import com.tpay.util.TpayBackpressUtil
 import com.tpay.sdk.api.models.*
 import android.content.Intent
 import com.tpay.sdk.api.addCard.*
@@ -25,6 +24,8 @@ import com.tpay.sdk.api.screenless.blik.*
 import com.tpay.sdk.api.screenless.googlePay.*
 import com.tpay.model.googlePay.*
 import com.tpay.sdk.api.screenless.channelMethods.*
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
 
 class TpayModule(
   private val reactContext: ReactApplicationContext
@@ -32,6 +33,7 @@ class TpayModule(
   private var sheet: Presentable? = null
   private var googlePayUtil: GooglePayUtil? = null
   private var openGooglePayPromise: Promise? = null
+  private var backPressedCallback: OnBackPressedCallback? = null
 
   init {
     reactContext.addActivityEventListener(this)
@@ -56,7 +58,7 @@ class TpayModule(
       activity = this,
       supportFragmentManager = supportFragmentManager
     ).apply {
-      addObserver(PaymentDelegateImpl(this) { tpayResult ->
+      addObserver(PaymentDelegateImpl(this, ::removeBackPressedCallback) { tpayResult ->
         handleResult(tpayResult, promise)
       })
       handleSheetOpenResult(this, present(), promise)
@@ -71,7 +73,7 @@ class TpayModule(
       activity = this,
       supportFragmentManager = supportFragmentManager
     ).apply {
-      addObserver(AddCardDelegateImpl(this) { tpayResult ->
+      addObserver(AddCardDelegateImpl(this, ::removeBackPressedCallback) { tpayResult ->
         handleResult(tpayResult, promise)
       })
       handleSheetOpenResult(this, present(), promise)
@@ -87,7 +89,7 @@ class TpayModule(
       activity = this,
       supportFragmentManager = supportFragmentManager
     ).apply {
-      addObserver(PaymentDelegateImpl(this) { tpayResult ->
+      addObserver(PaymentDelegateImpl(this, ::removeBackPressedCallback) { tpayResult ->
         handleResult(tpayResult, promise)
       })
       handleSheetOpenResult(this, present(), promise)
@@ -409,7 +411,7 @@ class TpayModule(
     when (sheetOpenResult) {
       is SheetOpenResult.Success -> {
         sheet = presentable
-        TpayBackpressUtil.set(presentable)
+        registerBackPressedCallback(presentable)
       }
 
       is SheetOpenResult.ConfigurationInvalid -> {
@@ -429,8 +431,26 @@ class TpayModule(
     }
   }
 
+  private fun registerBackPressedCallback(presentable: Presentable) {
+    (reactContext.currentActivity as? AppCompatActivity)?.let { activity ->
+      backPressedCallback?.remove()
+      backPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+          presentable.onBackPressed()
+        }
+      }
+      activity.onBackPressedDispatcher.addCallback(activity, backPressedCallback!!)
+    }
+  }
+
+  fun removeBackPressedCallback() {
+    backPressedCallback?.remove()
+    backPressedCallback = null
+    sheet = null
+  }
+
   override fun onActivityResult(
-    activity: Activity?,
+    activity: Activity,
     requestCode: Int,
     resultCode: Int,
     intent: Intent?

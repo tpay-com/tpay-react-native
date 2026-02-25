@@ -233,25 +233,6 @@ const configuration = new TpayConfiguration(
 await configure(configuration);
 ```
 
-### Android
-
-Tpay UI module is a native Android bottom sheet. In order to handle system backpress events you need
-to add the following code to your Activity.
-
-```kotlin
-import com.tpay.util.TpayBackpressUtil;
-
-class MainActivity : ReactActivity() {
-  override fun onBackPressed() {
-    if (TpayBackpressUtil.isModuleVisible) {
-      TpayBackpressUtil.onBackPressed()
-    } else {
-      super.onBackPressed()
-    }
-  }
-}
-```
-
 #### Proguard/R8
 
 If you are using Proguard/R8 in your project, you have to add the following rules to the

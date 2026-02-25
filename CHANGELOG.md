@@ -1,19 +1,38 @@
 ## UNRELEASED
 
+## 1.3.17
+
+- Change: Updated Android SDK to 1.2.7
+
+## 1.3.16
+
+- Change: Updated iOS SDK to 1.3.10
+- Change: Updated Android SDK to 1.2.6
+
+## 1.3.15
+
+- Change: Updated iOS SDK to 1.3.9
+- Fix: Payers information reset on language change on iOS
+- Fix: Lack of redirection for token transactions on iOS
+
 ## 1.3.14
+
 - Change: Updated iOS SDK to 1.3.8
 - Fix: Using callbacks internally to configure notifications & redirects
 
 ## 1.3.13
+
 - Change: Updated iOS SDK to 1.3.7
 - Fix: Passing success & error redirect urls to the API on Screenless transaction creation on iOS
 
 ## 1.3.12
+
 - Fix: Updated iOS SDK to version 1.3.6 to support exact channel in screenless mode for `TransferPayment`
 - Change: Updated iOS SDK to version 1.3.6 to handle passing `notifications` parameter
-- Change: ___REMOVED___ `bankName` parameter for `TransferPayment` 
+- Change: **_REMOVED_** `bankName` parameter for `TransferPayment`
 
 ## 1.3.11
+
 - Fixed: Screenless transfer payments on iOS
-- Change: Screenless payments now ___REQUIRES___ `callbacks` to be provided
-- Change: TransferPayment now ___REQUIRES___ `bankName` to be provided
+- Change: Screenless payments now **_REQUIRES_** `callbacks` to be provided
+- Change: TransferPayment now **_REQUIRES_** `bankName` to be provided

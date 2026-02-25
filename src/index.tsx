@@ -23,6 +23,8 @@ import type { BlikPayment } from './model/screenless/blik_payment';
 import type { ApplePayPayment } from './model/screenless/apple_pay_payment';
 import type { PayPoPayment } from './model/screenless/pay_po_payment';
 
+const sdkVersion: string = require('../package.json').version;
+
 const LINKING_ERROR =
   `The package 'react-native-tpay' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
@@ -106,7 +108,8 @@ export * from './component/tpay_button';
 export async function configure(
   configuration: TpayConfiguration
 ): Promise<Result> {
-  const result = await Tpay.configure(JSON.stringify(configuration));
+  const configWithVersion = { ...configuration, sdkVersion };
+  const result = await Tpay.configure(JSON.stringify(configWithVersion));
   return mapResult(result);
 }
 

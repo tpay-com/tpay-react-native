@@ -10,6 +10,11 @@ extension TpayModule {
                       supportedLanguages: [Language],
                       sslCertificatesProvider: SSLCertificatesProvider?,
                       detailsProvider: MerchantDetailsProvider) throws {
+        try TpayModule.configure(
+            compatibility: .reactNative,
+            sdkVersionName: reactNativeTpayVersion
+        )
+
         try TpayModule.configure(merchant: merchant)
             .configure(merchantDetailsProvider: detailsProvider)
 

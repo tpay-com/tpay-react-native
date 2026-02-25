@@ -72,8 +72,13 @@ android {
   }
 
   compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
+  }
+
+  kotlinOptions {
+    jvmTarget = "17"
+    freeCompilerArgs += ["-Xskip-metadata-version-check"]
   }
 }
 
@@ -90,6 +95,8 @@ dependencies {
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation 'com.tpay:sdk:1.2.4'
+  implementation('com.tpay:sdk:1.2.7') {
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
+  }
 }
 

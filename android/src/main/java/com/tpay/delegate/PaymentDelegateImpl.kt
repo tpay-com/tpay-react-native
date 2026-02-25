@@ -3,10 +3,10 @@ package com.tpay.delegate
 import com.tpay.sdk.api.payment.PaymentDelegate
 import com.tpay.sdk.api.models.ObservablePayment
 import com.tpay.TpayResult
-import com.tpay.util.TpayBackpressUtil
 
 class PaymentDelegateImpl(
   private val sheet: ObservablePayment,
+  private val onCleanup: () -> Unit,
   private val onResult: (TpayResult) -> Unit
 ) : PaymentDelegate {
   override fun onPaymentCreated(transactionId: String?) {
@@ -30,6 +30,6 @@ class PaymentDelegateImpl(
 
   private fun remove() {
     sheet.removeObserver()
-    TpayBackpressUtil.remove()
+    onCleanup()
   }
 }
