@@ -1,5 +1,9 @@
 ## UNRELEASED
 
+## 1.3.18
+
+- Fix: Updated iOS SDK to 1.3.12 (fix crash: NetworkRequestResult premature deallocation on background queue)
+
 ## 1.3.17
 
 - Change: Updated Android SDK to 1.2.7
