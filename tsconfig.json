@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "ignoreDeprecations": "5.0",
     "rootDir": ".",
     "paths": {
       "react-native-tpay": ["./src/index"]
@@ -22,6 +23,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
+    "types": ["jest"],
     "target": "esnext",
     "verbatimModuleSyntax": true
   }
