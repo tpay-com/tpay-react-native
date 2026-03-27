@@ -1,5 +1,9 @@
 ## UNRELEASED
 
+## 1.3.19
+
+- Fix: Updated iOS SDK to 1.3.13 (fix Apple Pay radiobox dot alignment, add close button to bank transfer payment webview)
+
 ## 1.3.18
 
 - Fix: Updated iOS SDK to 1.3.12 (fix crash: NetworkRequestResult premature deallocation on background queue)
