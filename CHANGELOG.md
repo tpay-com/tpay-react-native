@@ -1,5 +1,9 @@
 ## UNRELEASED
 
+## 1.3.22
+
+- Change: Update Android SDK to 1.2.8
+
 ## 1.3.21
 
 - Fix: Updated iOS SDK to 1.3.16
