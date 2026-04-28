@@ -1,5 +1,13 @@
 ## UNRELEASED
 
+## 1.3.21
+
+- Fix: Updated iOS SDK to 1.3.16
+- Feature: Back button (chevron) on 3DS screen during card tokenization on iOS — analogous to Android
+- Fix: BLIK alias `isRegistered` flag mapping on iOS — checkbox for alias registration now works correctly
+- Fix: Empty `blikAliasToRegister` no longer creates an unwanted alias
+- Fix: screenlessTransferPayment error when payer address field is null on iOS
+
 ## 1.3.20
 
 - Fix: Updated iOS SDK to 1.3.14 (fix race condition crash v2 — serial queue + handler cleanup)

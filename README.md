@@ -11,7 +11,7 @@ Documentation is available [here](https://tpay-com.github.io/tpay-react-native/)
 
 | Library             | Version                       |
 | ------------------- | ----------------------------- |
-| npm                 | 1.3.8                         |
+| npm                 | 1.3.21                        |
 | Minimum Android SDK | 23 (Android 6.0, Marshmallow) |
 | Minimum iOS version | 12.0                          |
 
@@ -112,28 +112,37 @@ new CertificatePinningConfiguration('ssl_pinning')
 
 In order to be able to use Google Pay method you have to provide your `merchant_id` to the SDK.
 
-> [!tip]
-> Your login name to the merchant panel is your merchant id.
-
 ```typescript
   new WalletConfiguration(
     new GooglePayConfiguration('merchant_id'),
   )
 ```
 
+`merchant_id` is unique identifier assigned to you during Tpay account registration.
+
 #### Apple Pay configuration
 
 In order to be able to use Apple Pay method you have to provide your `merchant_id` and `country_code` to the SDK.
 
+> [!warning]
+> - Apple Pay is available exclusively on Apple devices (iPhone, iPad, MacBook, iMac). Payments cannot be made on non-Apple operating systems such as Android or Windows.
+> - Apple Pay supports only **Visa** and **Mastercard**.
+
 > [!important]
-> To obtain the merchantIdentifier, follow these steps:
+> Before using Apple Pay, make sure the following prerequisites are met:
+> - Card payments are enabled in your merchant account.
+> - Apple Pay payment channel is activated in your merchant panel.
+
+> [!important]
+> To set up Apple Pay, you need an Apple Developer account. Follow these steps:
 > 1. Log in to your Apple Developer account.
 > 2. Navigate to the `Certificates, Identifiers & Profiles` section.
 > 3. Under `Identifiers,` select `Merchant IDs.`
 > 4. Click the `+` button to create a new Merchant ID.
 > 5. Fill in the required information and associate it with your app's Bundle ID.
-> 6. Once created, the merchant identifier can be found in the list of Merchant IDs.
-> 7. For more details, please follow [Apple Pay documentation](https://developer.apple.com/documentation/passkit/apple_pay/setting_up_apple_pay).
+> 6. Set up a **Payment Processing Certificate** for the Merchant ID.
+> 7. Once created, the merchant identifier can be found in the list of Merchant IDs.
+> 8. For more details, please follow [Apple Pay documentation](https://developer.apple.com/documentation/passkit/apple_pay/setting_up_apple_pay).
 
 ```typescript
   new WalletConfiguration(
@@ -412,6 +421,57 @@ new AutomaticPaymentMethods(
   ),
 );
 ```
+
+#### Google Pay on-site configuration
+
+Google Pay on-site is an integration of Google Pay payments that allows customers to pay directly from your mobile application.
+
+Google Pay on-site can be integrated in the following scenarios:
+
+- Android application (native) - Google Pay is launched directly in a native Android mobile application, where the integration is implemented using the Google Pay API for Android.
+
+> [!warning]
+> - The Google Pay on-site method is currently available only for the Pekao acquiring agent. Check whether your card payments are processed through this acquiring agent.
+> - Google Pay supports only **Visa** and **Mastercard**.
+
+> [!important]
+> Before using Google Pay, make sure the following prerequisites are met:
+> - Card payments are enabled in your merchant account.
+> - Google Pay payment channel is activated in your merchant panel.
+
+##### Android application (native)
+
+###### Development phase
+
+In order to be able to use Google Pay method you have to:
+
+- add `DigitalWallet.googlePay` to a supported payment list
+- provide your `merchant_id` to the SDK as follows
+
+```typescript
+new WalletConfiguration(
+  new GooglePayConfiguration('merchant_id'),
+)
+```
+
+`merchant_id` is unique identifier assigned to you during Tpay account registration.
+
+###### Production readiness
+
+To correctly launch Google Pay in an Android application, the application should:
+
+- be signed with the application certificate (SHA-256),
+- be submitted and configured in the Google Pay & Wallet Console,
+- have a correctly configured package name consistent with the application data registered in Google.
+
+Application requirements and environment configuration are described in Google's documentation:
+
+- [App prerequisites (minSdk, distribution via Google Play)](https://developers.google.com/pay/api/android/guides/setup)
+- [Application integration approval and publishing process](https://developers.google.com/pay/api/android/guides/test-and-deploy/publish-your-integration)
+
+Google provides a checklist of functional and branding requirements that must be met before publishing the integration:
+
+[Integration checklist](https://developers.google.com/pay/api/android/guides/test-and-deploy/integration-checklist)
 
 ## Tokenization
 
@@ -772,16 +832,12 @@ handleScreenlessResult(screenlessResult);
 
 #### BLIK Alias Payment
 
-If you have for example a returning users and you want to make their payments with BLIK even
-smoother,
+If you have returning users and you want to make their BLIK payments even smoother,
 you can register BLIK Alias for them, so they will only be prompted to accept payment in their
-banking app,
-without need of entering BLIK code each time they want to make the payment.
+banking app, without need of entering BLIK code each time they want to make the payment.
 
 > [!warning]
 > In order to register alias for a user/payment, you have to set `isRegistered` parameter to `false`.
-> Then, a successful payment will register the alias in Tpay system
-> and next time user will be able to use it.
 
 ```typescript
 const blikPayment = new BlikPayment(
@@ -791,22 +847,24 @@ const blikPayment = new BlikPayment(
 );
 ```
 
-If the payment were successful, you can assume an alias was created and can be used for the future
-payments.
+> [!important]
+> Provided alias cannot be assumed as registered until receiving webhook notification about its status. Notification should be received by dedicated backend server, for implementation details check official [documentation](https://docs-api.tpay.com/en/webhooks/) . Additionally your backend server should implement other BLIK related [notifications](https://docs-api.tpay.com/en/webhooks/#blik-one-clickblik-recurring-payments-after-expiration-update-or-delete-alias) to ensure BLIK alias is valid and usable.
 
-> [!warning]
-> If you already have registered alias for a user, you can set up `isRegistered` parameter to `true`.
-
-> [!warning]
-> To be able to pay with BLIK alias, you **MUST** set the code parameter to `null`.
+Once alias is registered for a user, you can set up `isRegistered` parameter to `true`.
 
 ```typescript
 const blikPayment = new BlikPayment(
   null,
-  new BlikAlias(false, '1234', 'label_1234'),
+  new BlikAlias(true, '1234', 'label_1234'),
   // rest of the BLIKPayment configuration
 );
 ```
+
+> [!warning]
+> To be able to pay with BLIK alias, you **MUST** set the code parameter to `null`.
+
+> [!warning]
+> Before testing BLIK alias functionality check sandbox environment limitations listed in [documentation](https://docs-api.tpay.com/en/first-steps/environments/#blik-payments)
 
 #### BLIK Ambiguous Alias Payment
 
@@ -963,47 +1021,6 @@ async function startScreenlessPayPoPayment() {
 > If PayPoPayment returns `ScreenlessPaymentCreated` result, you have to handle `paymentUrl`
 > sent with it and redirect user to it in order to complete the payment.
 
-## Screenless Google Pay payment (Android only)
-
-Google Pay payment requires a Google Pay token.
-
-```typescript
-const transaction = new PayPoPayment(
-  new PaymentDetails(
-    71.15,
-    'transaction description',
-    'hidden description',
-    Language.pl,
-  ),
-  new Payer(
-    'John Doe',
-    'john.doe@example.com',
-    '123456789',
-    new Address(
-      'Test Street1',
-      'Warsaw',
-      'PL',
-      '00-007',
-    ),
-  ),
-  new Callbacks(
-    new Redirects('https://success.url', 'https://error.url'),
-    new Notifications(
-      'https://yourdomain.com/notifications',
-      'email@address',
-    ),
-  ),
-);
-
-const screenlessResult = await screenlessPayPoPayment(transaction);
-
-handleScreenlessResult(screenlessResult);
-```
-
-> [!warning]
-> If PayPoPayment returns `ScreenlessPaymentCreated` result, you have to handle `paymentUrl`
-> sent with it and redirect user to it in order to complete the payment.
-
 ### Screenless Google Pay Payment (Android only)
 
 Tpay SDK allows you to perform Google Pay transactions.
@@ -1113,14 +1130,22 @@ else if (googlePayResult instanceof GooglePayOpenUnknownError) {
 > If `googlePayResult` returns `GooglePayOpenSuccess`, you **HAVE TO** use it's content to make an actual
 > payment buy using `GooglePayPayment` and `screenlessGooglePayPayment`.
 
+`merchant_id` is unique identifier assigned to you during Tpay account registration.
+
+> [!warning]
+> In order to launch Google Pay on production follow [these guidelines](#production-readiness).
+
 ### Screenless Apple Pay payment
 
 Tpay SDK allows you to perform Apple Pay transactions.
 
 > [!warning]
+> Apple Pay is available exclusively on Apple devices (iPhone, iPad, MacBook, iMac) and supports only **Visa** and **Mastercard**.
+
+> [!warning]
 > To be able to complete Apple Pay payment, you will need `apple_pay_token`. You **HAVE TO**
-> acquire a token by yourself. To do that check
-> official [Apple Pay documentation](https://developer.apple.com/design/human-interface-guidelines/apple-pay#app-top)
+> acquire a token by yourself using Apple's PassKit framework. To do that check
+> official [Apple Pay documentation](https://developer.apple.com/documentation/passkit/apple_pay/setting_up_apple_pay)
 
 ```typescript
 const applePayPayment = new ApplePayPayment(
