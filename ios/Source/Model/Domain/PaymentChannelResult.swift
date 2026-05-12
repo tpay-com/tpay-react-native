@@ -22,7 +22,7 @@ struct PaymentChannelResult: Encodable {
     }
 
     static func configurationError(error: Error) -> PaymentChannelResult {
-        return .init(type: Constant.configurationError, message: "\(error)", channels: nil)
+        return .init(type: Constant.configurationError, message: error.localizedDescription, channels: nil)
     }
 }
 

@@ -38,5 +38,5 @@ Pod::Spec.new do |s|
     s.dependency "ReactCommon/turbomodule/core"
    end
   end
-  s.dependency "Tpay-SDK", "1.3.16"
+  s.dependency "Tpay-SDK", "1.3.17"
 end

@@ -1,5 +1,10 @@
 ## UNRELEASED
 
+## 1.3.23
+
+- Fix: Updated iOS SDK to 1.3.17 (fix race condition crash v3 — throws-based error handling + NSCondition wait-for-config, replaces preconditionFailure)
+- Fix: Use `error.localizedDescription` for configuration error message on iOS (more user-friendly than raw error description)
+
 ## 1.3.22
 
 - Change: Update Android SDK to 1.2.8
