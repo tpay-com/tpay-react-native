@@ -21,6 +21,8 @@ import { mapPaymentChannelsResult } from './util/payment_channels_util';
 import type { RatyPekaoPayment } from './model/screenless/raty_pekao_payment';
 import type { BlikPayment } from './model/screenless/blik_payment';
 import type { ApplePayPayment } from './model/screenless/apple_pay_payment';
+import type { ApplePayInitPayment } from './model/screenless/apple_pay_init_payment';
+import type { ApplePayFinalizePayment } from './model/screenless/apple_pay_finalize_payment';
 import type { PayPoPayment } from './model/screenless/pay_po_payment';
 
 const sdkVersion: string = require('../package.json').version;
@@ -75,6 +77,8 @@ export * from './model/result/screenless_result';
 export * from './model/screenless/ambiguous_alias';
 export * from './model/screenless/ambiguous_blik_payment';
 export * from './model/screenless/apple_pay_payment';
+export * from './model/screenless/apple_pay_init_payment';
+export * from './model/screenless/apple_pay_finalize_payment';
 export * from './model/screenless/blik_payment';
 export * from './model/screenless/callbacks';
 export * from './model/screenless/credit_card_config';
@@ -233,6 +237,41 @@ export async function screenlessApplePayPayment(
 ): Promise<ScreenlessResult> {
   const result = await Tpay.screenlessApplePayPayment(
     JSON.stringify(applePayPayment)
+  );
+  return mapScreenlessResult(result);
+}
+
+/**
+ * Step 1 of the two-step Apple Pay flow.
+ * Creates a pending Apple Pay transaction and returns its `transactionId`
+ * before the Apple Pay sheet is shown to the user.
+ *
+ * Use the returned `transactionId` together with the payment token obtained
+ * from the wallet authorization in `finalizeApplePayPayment`.
+ *
+ * iOS only.
+ */
+export async function initApplePayPayment(
+  applePayInitPayment: ApplePayInitPayment
+): Promise<ScreenlessResult> {
+  const result = await Tpay.initApplePayPayment(
+    JSON.stringify(applePayInitPayment)
+  );
+  return mapScreenlessResult(result);
+}
+
+/**
+ * Step 2 of the two-step Apple Pay flow.
+ * Finalizes the transaction created by `initApplePayPayment` by submitting
+ * the Apple Pay payment token returned from the wallet authorization.
+ *
+ * iOS only.
+ */
+export async function finalizeApplePayPayment(
+  applePayFinalizePayment: ApplePayFinalizePayment
+): Promise<ScreenlessResult> {
+  const result = await Tpay.finalizeApplePayPayment(
+    JSON.stringify(applePayFinalizePayment)
   );
   return mapScreenlessResult(result);
 }

@@ -160,6 +160,28 @@ final class TpayRNModule: NSObject, RCTBridgeModule {
         }
     }
 
+    @objc func initApplePayPayment(_ json: String, resolve: @escaping RCTPromiseResolveBlock, reject _: RCTPromiseRejectBlock) {
+        Headless.getAvailablePaymentChannels { [weak self] result in
+            switch result {
+            case let .success(paymentChannels):
+                self?.invokeApplePayInit(json, resolve: resolve, paymentChannels: paymentChannels)
+            case let .failure(error):
+                resolve(ScreenlessResult.paymentFailure(error: error).toJson())
+            }
+        }
+    }
+
+    @objc func finalizeApplePayPayment(_ json: String, resolve: @escaping RCTPromiseResolveBlock, reject _: RCTPromiseRejectBlock) {
+        Headless.getAvailablePaymentChannels { [weak self] result in
+            switch result {
+            case let .success(paymentChannels):
+                self?.invokeApplePayFinalize(json, resolve: resolve, paymentChannels: paymentChannels)
+            case let .failure(error):
+                resolve(ScreenlessResult.paymentFailure(error: error).toJson())
+            }
+        }
+    }
+
     @objc func screenlessPayPoPayment(_ json: String, resolve: @escaping RCTPromiseResolveBlock, reject _: RCTPromiseRejectBlock) {
         Headless.getAvailablePaymentChannels { [weak self] result in
             switch result {
@@ -335,6 +357,51 @@ final class TpayRNModule: NSObject, RCTBridgeModule {
             try Headless.invokePayment(for: digitalWalletPayment,
                                        using: digitalWalletPayment.paymentChannel,
                                        with: .init(token: digitalWalletPayment.token)) { result in
+                switch result {
+                case let .success(transaction):
+                    resolve(ScreenlessResult.paymentCreated(continueUrl: transaction.continueUrl, transactionId: transaction.ongoingTransaction.id).toJson())
+                case let .failure(error):
+                    resolve(ScreenlessResult.paymentFailure(error: error).toJson())
+                }
+            }
+        } catch {
+            resolve(ScreenlessResult.paymentFailure(error: error).toJson())
+        }
+    }
+
+    private func invokeApplePayInit(_ json: String, resolve: @escaping RCTPromiseResolveBlock, paymentChannels: [Headless.Models.PaymentChannel]) {
+        guard let initPayment = TransactionConfiguration.applePayInitPayment(json: json, paymentChannels: paymentChannels) else {
+            resolve(ScreenlessResult.methodCallError().toJson())
+            return
+        }
+
+        do {
+            try TpayModule.configure(callbacks: initPayment.callbacks)
+            try Headless.initApplePayPayment(for: initPayment, using: initPayment.paymentChannel) { result in
+                switch result {
+                case let .success(transaction):
+                    resolve(ScreenlessResult.paymentCreated(continueUrl: transaction.continueUrl, transactionId: transaction.ongoingTransaction.id).toJson())
+                case let .failure(error):
+                    resolve(ScreenlessResult.paymentFailure(error: error).toJson())
+                }
+            }
+        } catch {
+            resolve(ScreenlessResult.paymentFailure(error: error).toJson())
+        }
+    }
+
+    private func invokeApplePayFinalize(_ json: String, resolve: @escaping RCTPromiseResolveBlock, paymentChannels: [Headless.Models.PaymentChannel]) {
+        guard let finalizePayment = TransactionConfiguration.applePayFinalizePayment(json: json, paymentChannels: paymentChannels) else {
+            resolve(ScreenlessResult.methodCallError().toJson())
+            return
+        }
+
+        let ongoingTransaction = Headless.Models.OngoingTransaction(id: finalizePayment.transactionId, notification: nil)
+
+        do {
+            try Headless.finalizeApplePayPayment(for: ongoingTransaction,
+                                                 using: finalizePayment.paymentChannel,
+                                                 with: .init(token: finalizePayment.applePayToken)) { result in
                 switch result {
                 case let .success(transaction):
                     resolve(ScreenlessResult.paymentCreated(continueUrl: transaction.continueUrl, transactionId: transaction.ongoingTransaction.id).toJson())

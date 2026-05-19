@@ -143,6 +143,36 @@ final class TransactionConfiguration {
         )
     }
 
+    static func applePayInitPayment(json: String, paymentChannels: [Headless.Models.PaymentChannel]) -> ApplePayInitPayment? {
+        guard let data = json.data(using: .utf8),
+              let initPayment = try? JSONDecoder().decode(T.ApplePayInitPayment.self, from: data),
+              let payer = makePayer(from: initPayment.payer),
+              let paymentChannel = paymentChannels.first(where: { $0.paymentKind == .applePay }) else {
+            return nil
+        }
+
+        let callbacks = makeCallbacksConfiguration(from: initPayment.callbacks)
+
+        return .init(amount: initPayment.paymentDetails.amount,
+                     description: initPayment.paymentDetails.description,
+                     hiddenDescription: initPayment.paymentDetails.hiddenDescription,
+                     payerContext: .init(payer: payer),
+                     paymentChannel: paymentChannel,
+                     callbacks: callbacks)
+    }
+
+    static func applePayFinalizePayment(json: String, paymentChannels: [Headless.Models.PaymentChannel]) -> ApplePayFinalizePayment? {
+        guard let data = json.data(using: .utf8),
+              let finalizePayment = try? JSONDecoder().decode(T.ApplePayFinalizePayment.self, from: data),
+              let paymentChannel = paymentChannels.first(where: { $0.paymentKind == .applePay }) else {
+            return nil
+        }
+
+        return .init(transactionId: finalizePayment.transactionId,
+                     applePayToken: finalizePayment.applePayToken,
+                     paymentChannel: paymentChannel)
+    }
+
     static func payPoPayment(payPoPaymentConfiguration: String, paymentChannels: [Headless.Models.PaymentChannel]) -> PayPoPayment? {
         guard let payPoData = payPoPaymentConfiguration.data(using: .utf8),
                 let payPoPayment = try? JSONDecoder().decode(T.PayPoPayment.self, from: payPoData),

@@ -1,5 +1,10 @@
 ## UNRELEASED
 
+## 1.3.24
+
+- Feature: Two-step Apple Pay flow on iOS — new `initApplePayPayment` / `finalizeApplePayPayment` methods return `transactionId` before the Apple Pay sheet is presented (parity with BLIK / transfer / PayPo). The existing `screenlessApplePayPayment` continues to work unchanged.
+- Fix: Updated iOS SDK to 1.3.18 (PayPo / 3DS / external transaction webviews no longer auto-zoom inputs on iPhone SE / XS)
+
 ## 1.3.23
 
 - Fix: Updated iOS SDK to 1.3.17 (fix race condition crash v3 — throws-based error handling + NSCondition wait-for-config, replaces preconditionFailure)

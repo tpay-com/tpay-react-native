@@ -29,6 +29,12 @@
     RCT_EXTERN_METHOD(screenlessApplePayPayment: (NSString *)json
                       resolve:(RCTPromiseResolveBlock)resolve
                       reject:(RCTPromiseRejectBlock)reject)
+    RCT_EXTERN_METHOD(initApplePayPayment: (NSString *)json
+                      resolve:(RCTPromiseResolveBlock)resolve
+                      reject:(RCTPromiseRejectBlock)reject)
+    RCT_EXTERN_METHOD(finalizeApplePayPayment: (NSString *)json
+                      resolve:(RCTPromiseResolveBlock)resolve
+                      reject:(RCTPromiseRejectBlock)reject)
     RCT_EXTERN_METHOD(screenlessPayPoPayment: (NSString *)json
                       resolve:(RCTPromiseResolveBlock)resolve
                       reject:(RCTPromiseRejectBlock)reject)
