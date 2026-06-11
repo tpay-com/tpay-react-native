@@ -17,6 +17,8 @@ export interface Spec extends TurboModule {
   screenlessTransferPayment(transferPayment: string): Promise<string>;
   screenlessGooglePayPayment(googlePayPayment: string): Promise<string>;
   screenlessApplePayPayment(applePayPayment: string): Promise<string>;
+  initApplePayPayment(applePayInitPayment: string): Promise<string>;
+  finalizeApplePayPayment(applePayFinalizePayment: string): Promise<string>;
   screenlessRatyPekaoPayment(ratyPekaoPayment: string): Promise<string>;
   screenlessPayPoPayment(payPoPayment: string): Promise<string>;
 

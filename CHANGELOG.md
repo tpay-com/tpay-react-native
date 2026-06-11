@@ -1,5 +1,13 @@
 ## UNRELEASED
 
+## 1.3.26
+
+- Fix: `initApplePayPayment` and `finalizeApplePayPayment` now work on the New Architecture. They were missing from the TurboModule spec (`NativeTpay.ts`), so on the New Architecture the calls were not bridged and resolved to nothing. Added both methods to the spec and added Android stubs (iOS only, same as `screenlessApplePayPayment`).
+
+## 1.3.25
+
+- Fix: Updated iOS SDK to 1.3.19 (PayPo webview focus-zoom fix that works on physical devices — form fields with computed font-size < 16px are raised to 16px so iOS no longer zooms on focus; the previous 1.3.18 viewport-meta approach did not work on real devices)
+
 ## 1.3.24
 
 - Feature: Two-step Apple Pay flow on iOS — new `initApplePayPayment` / `finalizeApplePayPayment` methods return `transactionId` before the Apple Pay sheet is presented (parity with BLIK / transfer / PayPo). The existing `screenlessApplePayPayment` continues to work unchanged.

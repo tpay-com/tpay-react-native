@@ -120,6 +120,16 @@ class TpayModule(
   }
 
   @ReactMethod
+  fun initApplePayPayment(json: String, promise: Promise) {
+    handleScreenlessResult(TpayScreenlessResult.MethodCallError(APPLE_PAY_NOT_AVAILABLE), promise)
+  }
+
+  @ReactMethod
+  fun finalizeApplePayPayment(json: String, promise: Promise) {
+    handleScreenlessResult(TpayScreenlessResult.MethodCallError(APPLE_PAY_NOT_AVAILABLE), promise)
+  }
+
+  @ReactMethod
   fun screenlessAmbiguousBLIKPayment(json: String, promise: Promise) = catchAndHandleScreenlessException(promise) {
     val payment = AmbiguousBLIKPayment.fromJson(json)
     TpayAmbiguousBLIKPaymentHandler(payment) { screenlessResult ->

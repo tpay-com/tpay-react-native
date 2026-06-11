@@ -1181,6 +1181,77 @@ const screenlessResult = await screenlessApplePayPayment(applePayPayment);
 handleScreenlessResult(screenlessResult);
 ```
 
+### Two-step Apple Pay flow (early `transactionId`)
+
+> [!note]
+> Available since **react-native-tpay 1.3.24** (iOS SDK 1.3.18). **iOS only.**
+
+The classic `screenlessApplePayPayment` above performs the whole operation in a
+single call and returns the `transactionId` only after the payment is finished.
+If you need the `transactionId` earlier (for example to start polling, log it, or
+correlate the order before the Apple Pay sheet is shown, the same way BLIK,
+transfer and PayPo already work), use the two-step flow instead.
+
+`screenlessApplePayPayment` keeps working unchanged, so existing integrations are
+not affected. Switching is opt-in. A version bump alone does not change behaviour;
+you must call the new methods.
+
+**Step 1: create the transaction (no token yet).**
+`initApplePayPayment` creates a pending transaction and returns its
+`transactionId` before you present the Apple Pay sheet. Note there is no
+`applePayToken` here.
+
+```typescript
+const initPayment = new ApplePayInitPayment(
+  new PaymentDetails(
+    71.15,
+    'transaction description',
+    'hidden description',
+    Language.pl,
+  ),
+  new Payer(
+    'John Doe',
+    'john.doe@example.com',
+    '123456789',
+    new Address('Test Street 1', 'Warsaw', 'PL', '00-007'),
+  ),
+  new Callbacks(
+    new Redirects('https://success.url', 'https://error.url'),
+    new Notifications('https://yourdomain.com/notifications', 'email@address'),
+  ),
+);
+
+const initResult = await initApplePayPayment(initPayment);
+// initResult is a ScreenlessPaymentCreated. Read the transactionId here,
+// before showing the Apple Pay sheet:
+const transactionId = initResult.transactionId;
+```
+
+**Step 2: acquire the Apple Pay token, then finalize.**
+Obtain the `apple_pay_token` yourself via Apple's PassKit framework (present the
+Apple Pay sheet). Then pass it together with the `transactionId` from step 1 to
+`finalizeApplePayPayment`. This call actually charges the transaction.
+
+```typescript
+const finalizePayment = new ApplePayFinalizePayment(
+  transactionId, // from initApplePayPayment
+  'apple_pay_token', // from PassKit wallet authorization
+);
+
+const screenlessResult = await finalizeApplePayPayment(finalizePayment);
+
+// On success this resolves to ScreenlessPaymentCreated (the same result every
+// other screenless method returns, including one-step screenlessApplePayPayment).
+// The final "paid" confirmation arrives asynchronously on your notification URL.
+handleScreenlessResult(screenlessResult);
+```
+
+> [!warning]
+> The transaction is not paid until `finalizeApplePayPayment` completes
+> successfully. After `initApplePayPayment` the transaction exists but is still
+> unpaid. If you never call `finalizeApplePayPayment`, the transaction stays
+> unpaid.
+
 ## License
 
 This library is released under the [MIT License](https://opensource.org/license/mit/).
