@@ -43,7 +43,8 @@ final class TpayRNModule: NSObject, RCTBridgeModule {
                                  preferredLanguage: preferredLanguage,
                                  supportedLanguages: supportedLanguages,
                                  sslCertificatesProvider: sslCertificatesProvider,
-                                 detailsProvider: detailsProvider)
+                                 detailsProvider: detailsProvider,
+                                 singleTransaction: configuration.singleTransaction())
             resolve(ConfigurationResult.configurationValid().toJson())
         } catch {
             resolve(ConfigurationResult.configurationFailure(error: error).toJson())

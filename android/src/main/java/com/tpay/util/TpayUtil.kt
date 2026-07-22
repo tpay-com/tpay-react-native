@@ -33,6 +33,7 @@ object TpayUtil {
         })
         .configure(merchant.environment)
         .configure(paymentMethods.methods)
+        .configure(Option.SingleTransactionOnly(singleTransaction))
         .configure(languages.preferredLanguage, languages.supportedLanguages)
         .configure(Compatibility.REACT_NATIVE, sdkVersion)
         .configure(object : MerchantDetailsProvider {

@@ -11,22 +11,26 @@ export class TpayConfiguration {
   merchantDetails: MerchantDetails;
   languages: Languages;
   paymentMethods: PaymentMethods;
+  singleTransaction: boolean;
 
   /**
    * @param merchant - configuration information about merchant
    * @param merchantDetails - information about merchant in different languages
    * @param languages - languages that user will be able to use in Tpay UI module
    * @param paymentMethods - payment methods that user will be able to use in Tpay UI module
+   * @param singleTransaction - Enables single transaction mode in the Tpay UI module. Defaults to `false`. Supported on iOS and Android.
    */
   constructor(
     merchant: Merchant,
     merchantDetails: MerchantDetails,
     languages: Languages,
-    paymentMethods: PaymentMethods
+    paymentMethods: PaymentMethods,
+    singleTransaction: boolean = false
   ) {
     this.merchant = merchant;
     this.merchantDetails = merchantDetails;
     this.languages = languages;
     this.paymentMethods = paymentMethods;
+    this.singleTransaction = singleTransaction;
   }
 }

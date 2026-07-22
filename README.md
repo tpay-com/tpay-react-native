@@ -191,6 +191,14 @@ new MerchantDetails(
 > Every `LocalizedString` value **MUST NOT** be an empty string!
 > Otherwise this may cause an app crash.
 
+### Single transaction mode
+
+When enabled, the Tpay UI module is restricted to completing a single transaction. Defaults to `false` (multiple transactions allowed) when omitted.
+
+```typescript
+const singleTransaction = true;
+```
+
 ### Summary
 Beneath you will find how a complete configuration should look like.
 
@@ -232,11 +240,14 @@ const paymentMethods = new PaymentMethods(
   [InstallmentPayment.ratyPekao, InstallmentPayment.payPo]
 );
 
+const singleTransaction = true;
+
 const configuration = new TpayConfiguration(
   merchant,
   merchantDetails,
   languages,
-  paymentMethods
+  paymentMethods,
+  singleTransaction
 );
 
 await configure(configuration);

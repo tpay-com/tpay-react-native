@@ -12,6 +12,7 @@ data class TpayConfiguration(
   val merchantDetails: MerchantDetails,
   val languages: Languages,
   val paymentMethods: PaymentMethods,
+  val singleTransaction: Boolean = false,
   val sdkVersion: String = "",
 ) : Configuration {
   override fun validate() {
@@ -37,6 +38,7 @@ data class TpayConfiguration(
     private const val MERCHANT_DETAILS = "merchantDetails"
     private const val LANGUAGES = "languages"
     private const val PAYMENT_METHODS = "paymentMethods"
+    private const val SINGLE_TRANSACTION = "singleTransaction"
     private const val SDK_VERSION = "sdkVersion"
 
     fun fromJson(json: String): TpayConfiguration = JSONObject(json).run {
@@ -45,6 +47,7 @@ data class TpayConfiguration(
         merchantDetails = MerchantDetails.fromJson(getJSONObject(MERCHANT_DETAILS)),
         languages = Languages.fromJson(getJSONObject(LANGUAGES)),
         paymentMethods = PaymentMethods.fromJson(getJSONObject(PAYMENT_METHODS)),
+        singleTransaction = optBoolean(SINGLE_TRANSACTION, false),
         sdkVersion = optString(SDK_VERSION, ""),
       )
     }

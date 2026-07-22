@@ -1,5 +1,10 @@
 ## UNRELEASED
 
+## 1.4.0
+
+- Change: Updated iOS SDK to 1.4.0
+- Feature: Add option to enable single transation mode for SDK's official screens
+
 ## 1.3.26
 
 - Fix: `initApplePayPayment` and `finalizeApplePayPayment` now work on the New Architecture. They were missing from the TurboModule spec (`NativeTpay.ts`), so on the New Architecture the calls were not bridged and resolved to nothing. Added both methods to the spec and added Android stubs (iOS only, same as `screenlessApplePayPayment`).
