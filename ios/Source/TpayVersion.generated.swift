@@ -1,2 +1,2 @@
 // Auto-generated from package.json — do not edit manually.
-let reactNativeTpayVersion: String = "1.3.26"
+let reactNativeTpayVersion: String = "1.4.1"
