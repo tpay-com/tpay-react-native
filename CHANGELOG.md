@@ -1,5 +1,16 @@
 ## UNRELEASED
 
+## 1.4.3
+
+- Change: Updated Android SDK to 1.2.10
+- Fix: Adjust payment method selection in single transaction mode
+
+## 1.4.2
+
+- Change: Updated iOS SDK to 1.4.2
+- Fix: Back button on the bank transfer webview returns to the payment method selection with the previously chosen method and bank preserved, instead of the payer details screen
+- Fix: Back button on the card tokenization webview no longer clears the add card form
+
 ## 1.4.1
 
 - Change: Updated iOS SDK to 1.4.1
