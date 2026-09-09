@@ -1,5 +1,11 @@
 ## UNRELEASED
 
+## 1.4.4
+
+- Change: Updated iOS SDK to 1.4.3
+- Improvement: [iOS] The authorization token is reused until it expires, so payments start faster and make fewer network requests
+- Fix: A second Apple Pay attempt made after the first one was cancelled or failed no longer leaves the button stuck in the loading state or closes immediately with an error
+
 ## 1.4.3
 
 - Change: Updated Android SDK to 1.2.10
