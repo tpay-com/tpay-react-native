@@ -1,6 +1,7 @@
 {
   "name": "react-native-tpay",
-  "version": "1.4.4",
+  "version": "1.5.0",
+  "tpayIosSdkVersion": "1.4.3",
   "description": "The Tpay SDK empowers your app to seamlessly integrate Tpay’s payment functionalities, providing a comprehensive and developer-friendly solution for managing payments.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -31,7 +32,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
-    "prepare": "node scripts/generate-ios-version.js && bob build",
+    "prepare": "node scripts/generate-ios-version.js && node scripts/download-ios-sdk.js && bob build",
+    "prepublishOnly": "test -d ios/Frameworks/Tpay.xcframework || (echo 'error: ios/Frameworks/Tpay.xcframework is missing, run node scripts/download-ios-sdk.js on macOS' >&2 && exit 1)",
     "release": "release-it"
   },
   "keywords": [

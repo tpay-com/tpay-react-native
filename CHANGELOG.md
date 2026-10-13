@@ -1,5 +1,9 @@
 ## UNRELEASED
 
+## 1.5.0
+
+- Change: [iOS] The native Tpay SDK is bundled in the package instead of the `Tpay-SDK` pod from CocoaPods trunk
+
 ## 1.4.4
 
 - Change: Updated iOS SDK to 1.4.3

@@ -33,6 +33,14 @@ Documentation is available [here](https://tpay-com.github.io/tpay-react-native/)
 npm install react-native-tpay
 ```
 
+React Native CLI: install the iOS dependencies.
+
+```sh
+cd ios && pod install
+```
+
+Expo: rebuild the native app with `npx expo prebuild` or `npx expo run:ios`.
+
 ## Configuration
 
 > [!note]
